@@ -1,0 +1,212 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@theme inline {
+  --color-ocean: var(--ocean);
+  --color-ocean-deep: var(--ocean-deep);
+  --color-ocean-soft: var(--ocean-soft);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dim: var(--gold-dim);
+  --color-limestone: var(--limestone);
+  --color-limestone-soft: var(--limestone-soft);
+  --color-stone: var(--stone);
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-line-gold: var(--line-gold);
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-monument: var(--font-cinzel), "Cinzel", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", system-ui, sans-serif;
+
+  --breakpoint-xs: 30rem;
+  --container-site: 128rem;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    background: var(--ocean);
+    color: var(--limestone);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--gold) 70%, transparent);
+    color: var(--ocean-deep);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Editorial uppercase label */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .eyebrow-muted {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+
+  /* Monumental wordmark treatment */
+  .monument {
+    font-family: var(--font-monument);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Hairline rules */
+  .rule {
+    height: 1px;
+    background: var(--line);
+  }
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--gold) 20%,
+      var(--gold) 80%,
+      transparent
+    );
+  }
+
+  .gold-text {
+    color: var(--gold);
+  }
+
+  /* Container */
+  /* z-index 2 lifts content above the site-wide chart lens (z-index 1). */
+  .site-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--container-site);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 6rem);
+  }
+
+  /* Section spacing rhythm */
+  .section {
+    padding-block: clamp(5rem, 11vw, 10rem);
+  }
+
+  /* Oversized display numerals */
+  .display-numeral {
+    font-family: var(--font-display);
+    font-weight: 300;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--gold) 55%, transparent);
+  }
+
+  /* Subtle vignette for atmospheric sections */
+  .vignette {
+    background:
+      radial-gradient(
+        120% 80% at 50% 0%,
+        color-mix(in srgb, var(--slate) 28%, transparent),
+        transparent 60%
+      ),
+      var(--ocean);
+  }
+
+  /*
+    Coach carousel halo: fades towards the bottom, dissolves quickly when the
+    centre coach changes and returns slowly once the new bust settles.
+  */
+  .coach-halo {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
+    -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 82%);
+    mask-image: linear-gradient(to bottom, #000 30%, transparent 82%);
+    transition:
+      opacity 0.5s ease-in,
+      transform 0.5s ease-in;
+  }
+  .coach-halo[data-visible="true"] {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition:
+      opacity 1.3s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Caption rises on every change */
+  .animate-coach-rise {
+    animation: coach-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+  }
+
+  /* Reveal helper: elements start visible; GSAP sets initial states at runtime */
+  [data-reveal] {
+    will-change: transform, opacity;
+  }
+}
+
+
+@keyframes coach-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

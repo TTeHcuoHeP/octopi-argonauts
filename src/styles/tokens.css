@@ -1,0 +1,30 @@
+/*
+  ARGONAUTS 2027 — Design tokens
+  Approved moodboard palette (working HEX approximations) plus derived neutrals.
+*/
+:root {
+  /* Core palette */
+  --ocean: #102235; /* Deep Ocean — primary background */
+  --slate: #45576b; /* Slate Blue — secondary surfaces */
+  --gold: #b99261; /* Aged Gold — accents & CTA */
+  --limestone: #e0ccb5; /* Limestone — light text / light sections */
+  --stone: #9c8878; /* Warm Stone — muted details */
+  --charcoal: #292624; /* Charcoal — dark contrast surfaces */
+
+  /* Derived shades */
+  --ocean-deep: #0b1826;
+  --ocean-soft: #16304a;
+  --slate-soft: #5d6f83;
+  --gold-light: #d3b589;
+  --gold-dim: #8a6d47;
+  --limestone-soft: #c9b6a0;
+  --ink: #0a1420;
+
+  /* Lines */
+  --line: rgba(224, 204, 181, 0.12);
+  --line-strong: rgba(224, 204, 181, 0.22);
+  --line-gold: rgba(185, 146, 97, 0.45);
+
+  /* Layout */
+  --header-height: 5rem;
+}
