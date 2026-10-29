@@ -13,6 +13,16 @@ const STROKE = {
 /** Each part of an icon moves about its own anchor (set in viewBox units). */
 const PART = "transition-transform duration-500 ease-luxe [transform-box:view-box]";
 
+/** A figure that lifts its head on hover. */
+function PersonIcon() {
+  return (
+    <svg viewBox="0 0 48 48" className="h-full w-full overflow-visible" aria-hidden>
+      <circle cx="24" cy="17" r="6.5" {...STROKE} className={`${PART} group-hover:-translate-y-[2px]`} />
+      <path d="M12.5 38.5v-1.8c0-5.6 4.5-10.2 10.1-10.2h2.8c5.6 0 10.1 4.6 10.1 10.2v1.8Z" {...STROKE} />
+    </svg>
+  );
+}
+
 /** Three cards that fan wider on hover. */
 function CardsIcon() {
   const card = (angle: string, hover: string, front = false) => (
@@ -81,70 +91,94 @@ function ScrollIcon() {
   );
 }
 
-const features: { label: [string, string]; icon: ReactNode }[] = [
-  { label: ["Hand-History", "Reviews"], icon: <CardsIcon /> },
-  { label: ["Strategic", "Feedback"], icon: <KnightIcon /> },
-  { label: ["Ongoing Personal", "Guidance"], icon: <ScrollIcon /> },
+const features: { title: string; body: string; icon: ReactNode }[] = [
+  {
+    title: "Personal support throughout the program",
+    body: "Direct access to Sam for your questions, decisions, and development at every stage of the journey.",
+    icon: <PersonIcon />,
+  },
+  {
+    title: "Hand history and database reviews",
+    body: "In-depth analysis of your hands and database with actionable insights tailored to your game.",
+    icon: <CardsIcon />,
+  },
+  {
+    title: "Strategic questions and direct guidance",
+    body: "Get clear answers to your most important strategic questions from one of the best in the world.",
+    icon: <KnightIcon />,
+  },
+  {
+    title: "Individual feedback as your game evolves",
+    body: "Ongoing, personalized feedback to help you apply concepts, track progress, and reach the next level.",
+    icon: <ScrollIcon />,
+  },
 ];
 
 /**
- * Sam Greenwood — the resident coach who leads the crew through the whole
- * voyage. His portrait spans the top and sinks into the night ground; the copy
- * sits on that dark lower edge. Static; only the three emblems answer the cursor.
+ * Sam Greenwood — the resident mentor who stays with every member for the
+ * whole voyage. Portrait card on the left, the offer on the right. Static;
+ * only the emblems answer the cursor.
  */
 export function Mentor() {
   return (
-    <section id="mentor" aria-labelledby="mentor-title" className="relative pb-[clamp(4rem,8vw,7rem)]">
-      {/* Portrait: fades out at the foot and the sides into the page ground */}
-      <div className="relative aspect-square w-full overflow-hidden sm:aspect-[1671/941]" aria-hidden>
-        <Image
-          src="/images/mentor/sam-greenwood.webp"
-          alt=""
-          fill
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-[52%_30%] sm:object-[55%_20%]"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--ocean)_0%,transparent_14%,transparent_38%,color-mix(in_srgb,var(--ocean)_70%,transparent)_58%,var(--ocean)_82%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--ocean)_0%,transparent_14%,transparent_86%,var(--ocean)_100%)]" />
-      </div>
+    <section id="mentor" aria-labelledby="mentor-title" className="relative py-[clamp(4rem,7vw,6.5rem)]">
+      <div className="site-container">
+        <div className="grid items-center gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-12 lg:gap-20">
+          <div className="mx-auto w-full max-w-[26rem] md:max-w-none">
+            <Image
+              src="/images/mentor/sam-portrait.webp"
+              alt="Sam Greenwood, portrayed as a classical scholar at a map table by the sea"
+              width={688}
+              height={813}
+              unoptimized
+              className="h-auto w-full [filter:drop-shadow(0_30px_50px_rgba(0,0,0,0.55))]"
+            />
+          </div>
 
-      <div className="site-container relative -mt-[22vw] text-center sm:-mt-[24vw]">
-        <h2
-          id="mentor-title"
-          className="font-display text-[clamp(3.5rem,8.5vw,8rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-limestone [text-shadow:0_4px_30px_rgba(5,12,22,0.85)]"
-        >
-          Sam Greenwood
-        </h2>
-        <p className="mt-5 text-[clamp(1.25rem,2.1vw,2rem)] font-light tracking-[0.03em] text-limestone [text-shadow:0_2px_18px_rgba(5,12,22,0.9)]">
-          Your personal trainer throughout the journey.
-        </p>
-        <p className="mx-auto mt-5 max-w-[52rem] text-balance text-[clamp(1rem,1.25vw,1.1875rem)] leading-[1.7] text-limestone-soft">
-          Direct access to Sam Greenwood for hand-history reviews, strategic questions, and
-          personalized guidance throughout the entire program.
-        </p>
+          <div>
+            <h2
+              id="mentor-title"
+              className="font-display text-[clamp(2.75rem,4.6vw,4.5rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-limestone"
+            >
+              Sam Greenwood
+            </h2>
+            <p className="mt-3 text-[clamp(1.125rem,1.5vw,1.5rem)] font-light tracking-[0.02em] text-limestone">
+              Your personal mentor throughout the journey.
+            </p>
+            <p className="mt-4 max-w-[40rem] text-[0.9375rem] leading-[1.7] text-limestone-soft md:text-base">
+              Sam Greenwood personally supports each hero on their path, providing hands-on feedback,
+              strategic guidance, and individual attention throughout the entire program.
+            </p>
 
-        <ul className="mx-auto mt-14 grid max-w-[68rem] gap-12 sm:grid-cols-3 sm:gap-0 md:mt-16">
-          {features.map(({ label, icon }, i) => (
-            <li key={label.join(" ")} className="group relative flex flex-col items-center px-4">
-              {/* Divider between items */}
-              {i > 0 && (
-                <span
-                  className="absolute left-0 top-[12%] hidden h-[42%] w-px bg-gradient-to-b from-transparent via-gold/70 to-transparent sm:block"
-                  aria-hidden
-                />
-              )}
-              <div className="h-24 w-24 text-gold transition-[translate,filter,color] duration-500 ease-luxe group-hover:-translate-y-1.5 group-hover:text-gold-light group-hover:[filter:drop-shadow(0_0_14px_rgba(211,181,137,0.55))] lg:h-32 lg:w-32">
-                {icon}
-              </div>
-              <p className="mt-7 text-[0.9375rem] uppercase leading-[1.7] tracking-[0.28em] text-limestone-soft transition-colors duration-500 ease-luxe group-hover:text-limestone lg:text-[1.0625rem]">
-                {label[0]}
-                <br />
-                {label[1]}
-              </p>
-            </li>
-          ))}
-        </ul>
+            <ul className="mt-8 space-y-5 md:mt-9">
+              {features.map(({ title, body, icon }) => (
+                <li key={title} className="group grid grid-cols-[3.5rem_1fr] items-start gap-5 lg:grid-cols-[4rem_1fr]">
+                  <span className="relative flex aspect-square items-center justify-center rounded-full border border-gold/80 text-gold transition-[border-color,box-shadow,color] duration-500 ease-luxe group-hover:border-gold-light group-hover:text-gold-light group-hover:shadow-[0_0_22px_-2px_rgba(211,181,137,0.55)]">
+                    <span className="h-[70%] w-[70%]">{icon}</span>
+                  </span>
+                  <div className="pt-1">
+                    <h3 className="font-display text-[clamp(1.1875rem,1.45vw,1.4375rem)] font-semibold leading-snug text-limestone transition-colors duration-500 group-hover:text-gold-light">
+                      {title}
+                    </h3>
+                    <p className="mt-1 text-[0.875rem] leading-[1.6] text-limestone-soft md:text-[0.9375rem]">{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* Hairline with a gold diamond */}
+            <div className="mt-8 flex items-center gap-3 md:mt-9" aria-hidden>
+              <span className="h-px flex-1 bg-gradient-to-r from-gold/20 to-gold/60" />
+              <span className="h-2 w-2 rotate-45 border border-gold" />
+              <span className="h-px flex-1 bg-gradient-to-l from-gold/20 to-gold/60" />
+            </div>
+            <p className="mt-6 font-display text-[clamp(1.0625rem,1.3vw,1.3125rem)] leading-[1.55] text-limestone-soft">
+              Sam is more than an instructor — he is your personal mentor, accompanying you throughout
+              the entire voyage, helping you navigate challenges, refine your game, and unlock your full
+              potential.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
