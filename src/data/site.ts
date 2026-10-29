@@ -39,7 +39,7 @@ export const site = {
 export const navLinks = [
   { label: "The Program", href: "#program" },
   { label: "Coaches", href: "#coaches" },
-  { label: "The Experience", href: "#experience" },
+  { label: "The Experience", href: "#benefits" },
   { label: "The Quest", href: "#quest" },
   { label: "Membership", href: "#membership" },
   { label: "FAQ", href: "#faq" },

@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type HTMLAttributes, type PointerEvent } from "react";
 import {
   Gem,
   GraduationCap,
+  Hand,
   Landmark,
   ListChecks,
   MailOpen,
   MessageSquareText,
+  MousePointer2,
   Spade,
   Swords,
   Target,
@@ -19,35 +21,23 @@ import {
 import { questChart, questCheckpoints, questMap, type QuestIcon } from "@/data/quest";
 import { getGsap } from "@/animations/gsap";
 import { cn } from "@/lib/cn";
-import {
-  cameraTransform,
-  coverSize,
-  measureCheckpoints,
-  routePoints,
-  smoothPath,
-  type Viewport,
-} from "./questGeometry";
+import { cameraTransform, coverSize, measureCheckpoints, routePoints, smoothPath, type Viewport } from "./questGeometry";
 
-/** Per-breakpoint camera choreography. Scroll length is in viewport heights. */
+/** Per-breakpoint choreography. Scroll length is in viewport heights. */
 type JourneyConfig = {
   /** Initial map width as a fraction of the viewport. */
   contain: number;
-  /** Deep-zoom factor relative to full-bleed cover scale. */
-  zoom: number;
-  /** Where the route head sits on screen while travelling (room above for the HUD). */
-  focusX: number;
+  /** Where the route sits vertically once the map is open (room above for the title). */
   focusY: number;
-  /** HUD docked to the bottom of the screen instead of above the island. */
+  /** HUD docked to the bottom of the screen instead of beside the island. */
   docked: boolean;
   scrollVh: number;
-  /** Timeline units for the whole route; split between legs by distance. */
-  travel: number;
 };
 
 const CONFIGS: Record<"desktop" | "tablet" | "mobile", JourneyConfig> = {
-  desktop: { contain: 0.7, zoom: 1.5, focusX: 0.45, focusY: 0.66, docked: false, scrollVh: 10.5, travel: 9 },
-  tablet: { contain: 0.82, zoom: 1.3, focusX: 0.5, focusY: 0.64, docked: false, scrollVh: 9.5, travel: 8 },
-  mobile: { contain: 0.92, zoom: 1.15, focusX: 0.5, focusY: 0.4, docked: true, scrollVh: 8.5, travel: 7 },
+  desktop: { contain: 0.7, focusY: 0.56, docked: false, scrollVh: 3 },
+  tablet: { contain: 0.82, focusY: 0.52, docked: false, scrollVh: 3 },
+  mobile: { contain: 0.92, focusY: 0.42, docked: true, scrollVh: 2.4 },
 };
 
 const ICONS: Record<QuestIcon, LucideIcon> = {
@@ -71,23 +61,28 @@ const HUD_GAP = 56;
 const MIN_ISLAND_GAP = Math.min(
   ...questCheckpoints.slice(1).map((cp, i) => (cp.x - questCheckpoints[i].x) * questChart.width),
 );
+/** Horizontal share of the map the open chart must show: the whole route with its labels. */
+const ROUTE_SPAN = 0.95;
+const ROUTE_CENTER_X = 0.52;
+const ROUTE_CENTER_Y = 0.47;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const chapter = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
- * Section 04 journey: a pinned, scroll-scrubbed camera over the island map.
- * Contained map → full bleed (the section title surfaces) → deep zoom on the
- * first island → travel east while the gold route draws itself. Each island
- * carries its name from the start; on arrival the name opens into a HUD
- * panel, and closes back into the name on departure. One master timeline
- * drives everything; map, route and markers share one transformed coordinate
- * system, labels and HUDs stay in screen space for legibility.
+ * Section 04 chart. Scroll does one thing: the contained map opens to fill the
+ * screen while the title surfaces and the gold route draws itself across every
+ * island. Then the pin releases and the chart is explored by hand — markers
+ * pulse, and hovering (or tapping) a marker, an island name or a chapter on the
+ * rail opens that chapter's panel. Map, route and markers share one transformed
+ * coordinate system; labels, hit targets and panels stay in screen space.
  */
 export function QuestJourney() {
   const stageRef = useRef<HTMLDivElement>(null);
   const routeD = useMemo(() => smoothPath(routePoints()), []);
+  const [active, setActive] = useState<number | null>(null);
+  const pointer = useRef("mouse");
 
   useLayoutEffect(() => {
     const stage = stageRef.current;
@@ -102,14 +97,12 @@ export function QuestJourney() {
     const introVeil = stage.querySelector<HTMLElement>("[data-intro-veil]")!;
     const labelsLayer = stage.querySelector<HTMLElement>("[data-labels]")!;
     const labelAnchors = gsap.utils.toArray<HTMLElement>("[data-label-anchor]", stage);
-    const labels = gsap.utils.toArray<HTMLElement>("[data-label]", stage);
+    const hitAnchors = gsap.utils.toArray<HTMLElement>("[data-hit-anchor]", stage);
     const hudAnchors = gsap.utils.toArray<HTMLElement>("[data-hud-anchor]", stage);
     const hudBoxes = gsap.utils.toArray<HTMLElement>("[data-hud-box]", stage);
     const huds = gsap.utils.toArray<HTMLElement>("[data-hud]", stage);
-    const rail = gsap.utils.toArray<HTMLElement>("[data-rail]", stage);
     const railBox = stage.querySelector<HTMLElement>("[data-rail-box]")!;
     const railLayers = gsap.utils.toArray<HTMLElement>("[data-rail-layer]", stage);
-    const railFill = stage.querySelector<HTMLElement>("[data-rail-fill]")!;
     const markers = questCheckpoints.map((_, i) => ({
       dot: stage.querySelector<SVGCircleElement>(`[data-marker="${i}"] [data-dot]`)!,
       ring: stage.querySelector<SVGCircleElement>(`[data-marker="${i}"] [data-ring]`)!,
@@ -119,16 +112,74 @@ export function QuestJourney() {
     const length = route.getTotalLength();
     const stops = measureCheckpoints(route);
 
-    /** Screen positions of each island label above its marker, scaled with the map. */
-    const placeLabels = (tx: number, ty: number, s: number, coverW: number, coverH: number, dim = 1) => {
-      const k = (s * coverW) / questChart.width;
-      questCheckpoints.forEach((cp, i) => {
-        const x = tx + s * cp.x * coverW;
-        const y = ty + s * cp.y * coverH - cp.labelOffset * k;
-        labelAnchors[i].style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      });
-      labelsLayer.style.opacity = String(clamp((MIN_ISLAND_GAP * k - 110) / 50, 0, 1) * dim);
+    const setReady = (ready: boolean) => {
+      const value = String(ready);
+      if (stage.dataset.ready === value) return;
+      stage.dataset.ready = value;
+      if (!ready) setActive(null);
     };
+
+    /**
+     * Writes the camera and everything pinned to the islands in screen space:
+     * names, hit targets and (unless docked) the chapter panels.
+     */
+    const place = (
+      vp: Viewport,
+      cam: { tx: number; ty: number; s: number; cover: { w: number; h: number } },
+      docked: boolean,
+      band: { top: number; bottom: number },
+    ) => {
+      const { tx, ty, s, cover } = cam;
+      world.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${s})`;
+      const k = (s * cover.w) / questChart.width;
+      labelsLayer.style.opacity = String(clamp((MIN_ISLAND_GAP * k - 110) / 50, 0, 1));
+
+      questCheckpoints.forEach((cp, i) => {
+        const x = tx + s * cp.x * cover.w;
+        const y = ty + s * cp.y * cover.h;
+        // Names stay whole on screen: the far islands sit close to the edges.
+        const half = (labelAnchors[i].firstElementChild as HTMLElement).offsetWidth / 2 + 12;
+        const lx = clamp(x, half, Math.max(half, vp.w - half));
+        labelAnchors[i].style.transform = `translate3d(${lx}px, ${y - cp.labelOffset * k}px, 0)`;
+        hitAnchors[i].style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        if (docked) return;
+
+        // Panels open above their island when the band between title and rail
+        // allows, otherwise beside it; the pointer always aims at the marker.
+        const w = hudBoxes[i].offsetWidth;
+        const h = hudBoxes[i].offsetHeight;
+        let side: "top" | "right" | "left" = "top";
+        let left: number;
+        let top: number;
+        if (y - HUD_GAP - h >= band.top) {
+          left = clamp(x - w / 2, 16, vp.w - 16 - w) - x;
+          top = -HUD_GAP - h;
+          huds[i].style.setProperty("--caret-x", `${clamp(-left, 28, w - 28)}px`);
+        } else {
+          side = x + HUD_GAP + w + 16 <= vp.w ? "right" : "left";
+          left = side === "right" ? HUD_GAP : -HUD_GAP - w;
+          top = clamp(y - h / 2, band.top, Math.max(band.top, band.bottom - h)) - y;
+          huds[i].style.setProperty("--caret-y", `${clamp(-top, 24, h - 24)}px`);
+        }
+        hudAnchors[i].style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        hudBoxes[i].style.left = `${left}px`;
+        hudBoxes[i].style.top = `${top}px`;
+        if (huds[i].dataset.place !== side) huds[i].dataset.place = side;
+      });
+    };
+
+    /** Free vertical band for panels: below the title, above the chapter rail. */
+    const measureBand = (vp: Viewport) => {
+      const stageTop = stage.getBoundingClientRect().top;
+      const titleEnd = introItems[introItems.length - 1];
+      const titleBottom = titleEnd.getBoundingClientRect().bottom - stageTop - Number(gsap.getProperty(titleEnd, "y"));
+      // offsetTop ignores the rail's own entrance offset (GSAP y) — we want its resting place.
+      const railTop = railBox.offsetHeight ? railBox.offsetTop : vp.h;
+      return { top: titleBottom + 16, bottom: railTop - 16 };
+    };
+
+    /** Scale at which the whole route fits across the screen (never past cover). */
+    const openScale = (vp: Viewport, cover: { w: number }) => Math.min(1, vp.w / (ROUTE_SPAN * cover.w));
 
     const mm = gsap.matchMedia();
     mm.add(
@@ -140,115 +191,80 @@ export function QuestJourney() {
       },
       (ctx) => {
         const c = ctx.conditions as Record<string, boolean>;
-        let vp: Viewport = { w: stage.clientWidth, h: stage.clientHeight };
+        world.style.transformOrigin = "0 0";
 
-        // Reduced motion: the whole chart at once — static, complete, readable.
+        // Reduced motion: the open chart at once — static, complete, explorable.
         if (c.reduce) {
-          const place = () => {
-            vp = { w: stage.clientWidth, h: stage.clientHeight };
+          const docked = window.matchMedia("(max-width: 767px)").matches;
+          const layout = () => {
+            const vp = { w: stage.clientWidth, h: stage.clientHeight };
             const cover = coverSize(vp);
-            const s = Math.min((0.92 * vp.w) / cover.w, (0.86 * vp.h) / cover.h);
-            const cam = cameraTransform(vp, s, 0.5, 0.5, 0.5, 0.5);
-            gsap.set(world, { width: cover.w, height: cover.h, x: cam.tx, y: cam.ty, scale: s, transformOrigin: "0 0" });
-            placeLabels(cam.tx, cam.ty, s, cover.w, cover.h);
+            world.style.width = `${cover.w}px`;
+            world.style.height = `${cover.h}px`;
+            const s = openScale(vp, cover);
+            place(vp, cameraTransform(vp, s, ROUTE_CENTER_X, ROUTE_CENTER_Y, 0.5, 0.55), docked, measureBand(vp));
           };
-          place();
-          gsap.set(vignette, { opacity: 1 });
+          layout();
+          gsap.set(vignette, { opacity: 0 });
           gsap.set(head, { opacity: 0 });
           markers.forEach((m) => {
             gsap.set(m.dot, { opacity: 1 });
-            gsap.set(m.ring, { opacity: 0.6 });
+            gsap.set(m.ring, { opacity: 0.9 });
+            gsap.set(m.glow, { opacity: 0.4 });
+            if (m.outer) gsap.set(m.outer, { opacity: 0.45, attr: { r: 26 } });
           });
-          window.addEventListener("resize", place);
-          return () => window.removeEventListener("resize", place);
+          setReady(true);
+          window.addEventListener("resize", layout);
+          return () => {
+            window.removeEventListener("resize", layout);
+            world.style.cssText = "";
+          };
         }
 
         const cfg = c.desktop ? CONFIGS.desktop : c.tablet ? CONFIGS.tablet : CONFIGS.mobile;
-        const state = { k: 0, z: 1, cx: 0.5, cy: 0.5, fx: 0.5, fy: 0.5, follow: 0, p: 0, vignette: 1 };
+        const state = { k: 0, p: 0, vignette: 1 };
+        let vp: Viewport = { w: stage.clientWidth, h: stage.clientHeight };
         let cover = coverSize(vp);
         let s0 = 1;
-        let hudSizes: { w: number; h: number }[] = [];
-        /** Free vertical band for HUDs: below the title, above the chapter rail. */
+        let s1 = 1;
         let band = { top: 0, bottom: 0 };
-        let railIndex = -2;
+
+        const apply = () => {
+          const s = lerp(s0, s1, state.k);
+          const cam = cameraTransform(
+            vp,
+            s,
+            lerp(0.5, ROUTE_CENTER_X, state.k),
+            lerp(0.5, ROUTE_CENTER_Y, state.k),
+            0.5,
+            lerp(0.5, cfg.focusY, state.k),
+          );
+          // When the open chart is narrower than the screen it keeps a soft frame.
+          vignette.style.opacity = String(Math.max(state.vignette, s1 < 0.97 ? 1 : 0));
+          route.style.strokeDashoffset = String(length * (1 - state.p));
+          const pt = route.getPointAtLength(state.p * length);
+          head.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
+          place(vp, cam, cfg.docked, band);
+          setReady(state.p >= 0.995);
+        };
 
         const layout = () => {
           vp = { w: stage.clientWidth, h: stage.clientHeight };
           cover = coverSize(vp);
           s0 = Math.min((cfg.contain * vp.w) / cover.w, (0.8 * vp.h) / cover.h);
+          s1 = openScale(vp, cover);
           world.style.width = `${cover.w}px`;
           world.style.height = `${cover.h}px`;
-          hudSizes = hudBoxes.map((b) => ({ w: b.offsetWidth, h: b.offsetHeight }));
-          const stageTop = stage.getBoundingClientRect().top;
-          const titleEnd = introItems[introItems.length - 1];
-          const titleBottom =
-            titleEnd.getBoundingClientRect().bottom - stageTop - Number(gsap.getProperty(titleEnd, "y"));
-          // offsetTop ignores the rail's own entrance offset (GSAP y) — we want its resting place.
-          const railTop = railBox.offsetHeight ? railBox.offsetTop : vp.h;
-          band = { top: titleBottom + 16, bottom: railTop - 16 };
+          band = measureBand(vp);
           apply();
         };
 
-        const apply = () => {
-          const s = lerp(s0, 1, state.k) * state.z;
-          const pt = route.getPointAtLength(state.p * length);
-          const cx = lerp(state.cx, pt.x / questChart.width, state.follow);
-          const cy = lerp(state.cy, pt.y / questChart.height, state.follow);
-          const cam = cameraTransform(vp, s, cx, cy, state.fx, state.fy);
-
-          world.style.transform = `translate3d(${cam.tx}px, ${cam.ty}px, 0) scale(${s})`;
-          vignette.style.opacity = String(state.vignette);
-          route.style.strokeDashoffset = String(length * (1 - state.p));
-          head.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
-          placeLabels(cam.tx, cam.ty, s, cover.w, cover.h);
-
-          // HUDs open above their island when the band between title and rail
-          // allows, otherwise beside it; the pointer always aims at the marker.
-          if (!cfg.docked) {
-            questCheckpoints.forEach((cp, i) => {
-              const x = cam.tx + s * cp.x * cover.w;
-              const y = cam.ty + s * cp.y * cover.h;
-              const { w, h } = hudSizes[i];
-              let place: "top" | "right" | "left" = "top";
-              let left: number;
-              let top: number;
-              if (y - HUD_GAP - h >= band.top) {
-                left = clamp(x - w / 2, 16, vp.w - 16 - w) - x;
-                top = -HUD_GAP - h;
-                huds[i].style.setProperty("--caret-x", `${clamp(-left, 28, w - 28)}px`);
-              } else {
-                place = x + HUD_GAP + w + 16 <= vp.w ? "right" : "left";
-                left = place === "right" ? HUD_GAP : -HUD_GAP - w;
-                top = clamp(y - h / 2, band.top, Math.max(band.top, band.bottom - h)) - y;
-                huds[i].style.setProperty("--caret-y", `${clamp(-top, 24, h - 24)}px`);
-              }
-              hudAnchors[i].style.transform = `translate3d(${x}px, ${y}px, 0)`;
-              hudBoxes[i].style.left = `${left}px`;
-              hudBoxes[i].style.top = `${top}px`;
-              if (huds[i].dataset.place !== place) huds[i].dataset.place = place;
-            });
-          }
-
-          // Chapter rail: gold line follows the route continuously; states change per chapter.
-          let idx = -1;
-          if (state.follow >= 1) stops.forEach((stop, i) => state.p >= stop - 0.002 && (idx = i));
-          const last = stops.length - 1;
-          const leg = idx >= 0 && idx < last ? clamp((state.p - stops[idx]) / (stops[idx + 1] - stops[idx]), 0, 1) : 0;
-          railFill.style.transform = `scaleX(${idx < 0 ? 0 : idx >= last ? 1 : (idx + leg) / last})`;
-          if (idx !== railIndex) {
-            railIndex = idx;
-            rail.forEach((el, i) => (el.dataset.state = i === idx ? "active" : i < idx ? "done" : "ahead"));
-          }
-        };
-
         // Initial states (GSAP-set ones revert automatically when the breakpoint changes).
-        world.style.transformOrigin = "0 0";
         route.style.strokeDasharray = `${length}`;
         gsap.set(head, { opacity: 0 });
         gsap.set(introItems, { opacity: 0, y: 18, filter: "blur(10px)" });
         gsap.set(introVeil, { opacity: 0 });
         gsap.set(railLayers, { opacity: 0, y: 16 });
-        gsap.set(huds, { autoAlpha: 0, y: 14, scale: 0.96, transformOrigin: "50% 100%" });
         markers.forEach((m) => {
           gsap.set(m.dot, { opacity: 0, attr: { r: 2 } });
           gsap.set([m.ring, m.glow, m.outer].filter(Boolean), { opacity: 0 });
@@ -271,60 +287,33 @@ export function QuestJourney() {
 
         // 01 — calm, contained chart: just the map and its island names.
         tl.to({}, { duration: 0.4 });
-        // 02 — expand to full bleed, the frame dissolving into the sea.
+        // 02 — open to the full chart, the frame dissolving into the sea.
         tl.to(state, { k: 1, vignette: 0, duration: 2, ease: "power1.inOut" });
-        // The section title surfaces once the map fills the screen, and stays.
-        tl.to(introVeil, { opacity: 1, duration: 0.9 })
+        // The title surfaces as the chart settles, and stays.
+        tl.to(introVeil, { opacity: 1, duration: 0.9 }, "-=0.6")
           .to(introItems, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, stagger: 0.25, ease: "power2.out" }, "<")
-          .to(railLayers, { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, "<0.2")
-          .to({}, { duration: 1.2 });
-        // 03 — move in close over the first island (the title stays for the whole journey).
-        const first = questCheckpoints[0];
-        tl.to(state, {
-          z: cfg.zoom,
-          cx: first.x,
-          cy: first.y,
-          fx: cfg.focusX,
-          fy: cfg.focusY,
-          duration: 2.2,
-          ease: "power2.inOut",
-        });
-        // From here the camera rides the head of the route (identical point at p = 0).
-        tl.set(state, { follow: 1 });
-        tl.to(head, { opacity: 1, duration: 0.3 });
-
-        // 04+ — each island: its name opens into the HUD, lingers, closes, travel on.
+          .to(railLayers, { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, "<0.2");
+        // 03 — the whole route draws itself; each island lights as the line reaches it.
+        const draw = 2.2;
+        const drawAt = tl.duration() - 1.4;
+        tl.to(head, { opacity: 1, duration: 0.2 }, drawAt);
+        tl.to(state, { p: 1, duration: draw, ease: "power1.inOut" }, drawAt);
         questCheckpoints.forEach((cp, i) => {
           const m = markers[i];
-          tl.to(labels[i], { opacity: 0, y: -10, duration: 0.4, ease: "power1.in" })
-            .to(m.dot, { opacity: 1, attr: { r: cp.final ? 5 : 4 }, duration: 0.3, ease: "power2.out" }, "<")
+          const at = drawAt + stops[i] * draw;
+          tl.to(m.dot, { opacity: 1, attr: { r: cp.final ? 5 : 4 }, duration: 0.3, ease: "power2.out" }, at)
             .fromTo(
               m.ring,
               { opacity: 0, attr: { r: 3 } },
-              { opacity: 0.95, attr: { r: cp.final ? 15 : 12 }, duration: 0.6, ease: "power2.out" },
-              "<",
+              { opacity: 0.9, attr: { r: cp.final ? 15 : 12 }, duration: 0.5, ease: "power2.out" },
+              at,
             )
-            .to(m.glow, { opacity: cp.final ? 0.65 : 0.5, duration: 0.6 }, "<")
-            .to(huds[i], { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" }, "<0.15");
-          if (m.outer) tl.to(m.outer, { opacity: 0.45, attr: { r: 26 }, duration: 0.9, ease: "power2.out" }, "<");
-
-          tl.to({}, { duration: cp.final ? 2.2 : 1.1 });
-          if (cp.final) return;
-
-          tl.to(huds[i], { autoAlpha: 0, y: 10, scale: 0.97, duration: 0.45, ease: "power1.in" })
-            .to(m.glow, { opacity: 0.12, duration: 0.45 }, "<")
-            .to(m.ring, { opacity: 0.45, duration: 0.45 }, "<")
-            .to(labels[i], { opacity: 1, y: 0, duration: 0.45, ease: "power1.out" }, "<0.2");
-
-          // Travel: eased so the camera slows into the next island.
-          const leg = (stops[i + 1] - stops[i]) * cfg.travel;
-          tl.to(state, { p: stops[i + 1], duration: leg, ease: "sine.inOut" });
-          // The next marker surfaces faintly as the route approaches it.
-          tl.to(markers[i + 1].dot, { opacity: 0.45, attr: { r: 2.6 }, duration: leg * 0.3 }, `>-${leg * 0.3}`);
+            .to(m.glow, { opacity: cp.final ? 0.55 : 0.4, duration: 0.5 }, at);
+          if (m.outer) tl.to(m.outer, { opacity: 0.45, attr: { r: 26 }, duration: 0.8, ease: "power2.out" }, at);
         });
-
-        // A last breath on the destination before the section releases.
-        tl.to({}, { duration: 0.8 });
+        tl.to(head, { opacity: 0, duration: 0.3 });
+        // A short breath on the finished chart before the section releases.
+        tl.to({}, { duration: 0.4 });
 
         layout();
         window.addEventListener("resize", layout);
@@ -343,10 +332,41 @@ export function QuestJourney() {
     return () => mm.revert();
   }, []);
 
+  /**
+   * Everything that opens a chapter: hover with a mouse, focus with a keyboard,
+   * tap on touch (a second tap, or a tap on open sea, closes it).
+   */
+  const trigger = (i: number): HTMLAttributes<HTMLElement> => ({
+    "data-trigger": "",
+    onPointerDown: (e: PointerEvent) => {
+      pointer.current = e.pointerType;
+    },
+    onPointerEnter: (e: PointerEvent) => {
+      if (e.pointerType === "mouse") setActive(i);
+    },
+    onPointerLeave: (e: PointerEvent) => {
+      if (e.pointerType === "mouse") setActive((a) => (a === i ? null : a));
+    },
+    // Keyboard focus only — a tap also focuses, and its click does the toggling.
+    onFocus: (e) => {
+      if (e.currentTarget.matches(":focus-visible")) setActive(i);
+    },
+    onBlur: () => setActive((a) => (a === i ? null : a)),
+    onClick: () => {
+      if (pointer.current !== "mouse") setActive((a) => (a === i ? null : i));
+    },
+  } as HTMLAttributes<HTMLElement>);
+
+  const last = questCheckpoints.length - 1;
+
   return (
     <div
       ref={stageRef}
-      className="relative z-[2] h-screen overflow-hidden bg-ocean [font-variant-numeric:lining-nums]"
+      data-ready="false"
+      onClick={(e) => {
+        if (!(e.target as HTMLElement).closest("[data-trigger]")) setActive(null);
+      }}
+      className="group/stage relative z-[2] h-screen overflow-hidden bg-ocean [font-variant-numeric:lining-nums]"
       aria-label="Interactive chart of the year-long voyage"
       role="region"
     >
@@ -379,7 +399,7 @@ export function QuestJourney() {
 
           <path data-route d={routeD} fill="none" stroke="var(--gold)" strokeWidth="1.4" strokeLinecap="round" />
 
-          {/* Luminous leading edge of the route */}
+          {/* Luminous leading edge of the route while it draws */}
           <g data-head>
             <circle r="9" fill="url(#quest-glow)" opacity="0.55" />
             <circle r="1.8" fill="var(--gold-light)" />
@@ -398,17 +418,23 @@ export function QuestJourney() {
         </svg>
       </div>
 
-      {/* Island names — screen space, above each island */}
+      {/* Island names — screen space, above each island; also open their chapter */}
       <div data-labels className="pointer-events-none absolute inset-0" aria-hidden>
         {questCheckpoints.map((cp, i) => (
           <div key={cp.id} data-label-anchor className="absolute left-0 top-0">
-            <div className="absolute bottom-0 left-0 w-max -translate-x-1/2 text-center">
-              <div data-label className="[text-shadow:0_1px_12px_rgba(6,12,20,0.95)]">
-                <p className="font-display text-base leading-none text-gold md:text-lg">{chapter(i)}</p>
-                <p className="mt-1.5 font-display text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-gold-light md:text-[0.875rem]">
+            <div className="absolute bottom-0 left-0 w-max -translate-x-1/2 pb-2 text-center">
+              <div
+                {...trigger(i)}
+                className={cn(
+                  "cursor-pointer px-3 pt-2 transition-[opacity,translate] duration-300 ease-luxe [text-shadow:0_1px_3px_rgba(6,12,20,0.9),0_2px_18px_rgba(6,12,20,0.95)] group-data-[ready=true]/stage:pointer-events-auto",
+                  active === i && "-translate-y-2 opacity-0",
+                )}
+              >
+                <p className="font-display text-xl font-semibold leading-none text-gold md:text-[1.75rem]">{chapter(i)}</p>
+                <p className="mt-2 font-display text-[0.9375rem] font-bold uppercase tracking-[0.24em] text-gold-light md:text-[1.1875rem]">
                   {cp.subtitle}
                 </p>
-                <p className="mt-1 font-display text-[0.875rem] italic text-limestone md:text-base">{cp.tagline}</p>
+                <p className="mt-1 font-display text-base italic text-limestone md:text-[1.25rem]">{cp.tagline}</p>
               </div>
             </div>
           </div>
@@ -436,12 +462,70 @@ export function QuestJourney() {
           </h2>
           <p
             data-intro-item
-            className="mx-auto mt-3 max-w-[40rem] font-display text-[clamp(1rem,1.3vw,1.25rem)] leading-[1.45] text-limestone-soft opacity-0 motion-reduce:opacity-100"
+            className="mx-auto mt-4 flex w-fit max-w-[40rem] items-center gap-3 rounded-full border border-gold/40 bg-[rgba(8,16,26,0.6)] px-5 py-2 font-display text-[clamp(1rem,1.2vw,1.1875rem)] leading-snug text-limestone opacity-0 motion-reduce:opacity-100"
           >
-            Scroll to trace the route, uncover each stage, and reveal the rewards of the journey.
+            <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden>
+              <span className="absolute inset-0 animate-[quest-pulse_2.4s_ease-out_infinite] rounded-full bg-gold-light" />
+              <span className="relative h-2.5 w-2.5 rounded-full bg-gold-light" />
+            </span>
+            <span className="hidden items-center gap-2 [@media(hover:hover)]:inline-flex">
+              <MousePointer2 className="h-4 w-4 text-gold" strokeWidth={1.5} aria-hidden />
+              Hover over a point on the route to explore each stage
+            </span>
+            <span className="inline-flex items-center gap-2 [@media(hover:hover)]:hidden">
+              <Hand className="h-4 w-4 text-gold" strokeWidth={1.5} aria-hidden />
+              Tap a point to explore each stage
+            </span>
           </p>
         </div>
       </div>
+
+      {/* Hit targets — pulse on every island once the route is drawn */}
+      {questCheckpoints.map((cp, i) => (
+        <div key={cp.id} data-hit-anchor className="pointer-events-none absolute left-0 top-0 h-0 w-0">
+          <button
+            type="button"
+            {...trigger(i)}
+            aria-label={`Chapter ${chapter(i)}: ${cp.subtitle}`}
+            className={cn(
+              "group/hit absolute h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 outline-none transition-opacity duration-700 group-data-[ready=true]/stage:pointer-events-auto group-data-[ready=true]/stage:opacity-100 focus-visible:ring-1 focus-visible:ring-gold-light",
+              cp.final && "h-24 w-24",
+            )}
+          >
+            {/* At rest: rings ripple out from a breathing core; they stop once the chapter is open */}
+            {active !== i && (
+              <>
+                <span
+                  className="absolute inset-[34%] animate-[quest-pulse_2.4s_ease-out_infinite] rounded-full border-2 border-gold-light"
+                  style={{ animationDelay: `${i * 0.35}s` }}
+                  aria-hidden
+                />
+                <span
+                  className="absolute inset-[34%] animate-[quest-pulse_2.4s_ease-out_infinite] rounded-full border-[1.5px] border-gold"
+                  style={{ animationDelay: `${i * 0.35 + 1.2}s` }}
+                  aria-hidden
+                />
+              </>
+            )}
+            <span
+              className={cn(
+                "absolute inset-[41%] rounded-full bg-gold-light shadow-[0_0_16px_4px_color-mix(in_srgb,var(--gold-light)_65%,transparent)] transition-[scale] duration-300 ease-luxe",
+                active === i ? "scale-125" : "animate-[quest-breathe_2.4s_ease-in-out_infinite]",
+              )}
+              style={{ animationDelay: `${i * 0.35}s` }}
+              aria-hidden
+            />
+            {/* Steady halo while its chapter is open */}
+            <span
+              className={cn(
+                "absolute inset-[16%] rounded-full border-2 border-gold-light shadow-[0_0_26px_color-mix(in_srgb,var(--gold-light)_75%,transparent),inset_0_0_14px_color-mix(in_srgb,var(--gold-light)_35%,transparent)] transition-[opacity,scale] duration-300 ease-luxe",
+                active === i ? "scale-100 opacity-100" : "scale-75 opacity-0",
+              )}
+              aria-hidden
+            />
+          </button>
+        </div>
+      ))}
 
       {/* HUD — screen space beside each island (docked to the bottom on phones) */}
       {questCheckpoints.map((cp, i) => (
@@ -461,7 +545,8 @@ export function QuestJourney() {
             <div
               data-hud
               data-place="top"
-              className="group invisible relative rounded-md border-2 border-gold/90 bg-[linear-gradient(180deg,rgba(15,28,43,0.95),rgba(9,18,29,0.95))] px-6 py-5 opacity-0 shadow-[0_32px_70px_-30px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(211,181,137,0.14)] md:px-9 md:py-8 md:[@media(max-height:820px)]:px-7 md:[@media(max-height:820px)]:py-5"
+              data-open={active === i}
+              className="group invisible relative translate-y-3 scale-[0.97] rounded-md border-2 border-gold/90 bg-[linear-gradient(180deg,rgba(15,28,43,0.95),rgba(9,18,29,0.95))] px-6 py-5 opacity-0 shadow-[0_32px_70px_-30px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(211,181,137,0.14)] transition-[opacity,translate,scale,visibility] duration-300 ease-luxe data-[open=true]:visible data-[open=true]:translate-y-0 data-[open=true]:scale-100 data-[open=true]:opacity-100 md:px-9 md:py-8 md:[@media(max-height:820px)]:px-7 md:[@media(max-height:820px)]:py-5"
             >
               <p className="font-display text-[0.875rem] font-medium uppercase tracking-[0.3em] text-gold md:text-[0.9375rem]">
                 Chapter {chapter(i)}
@@ -547,39 +632,44 @@ export function QuestJourney() {
       {/* Settles the rail onto the sea so it reads clearly over the map (appears with the title) */}
       <div
         data-rail-layer
-        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-56 bg-gradient-to-t from-ocean via-ocean/70 to-transparent opacity-0 md:block motion-reduce:hidden"
+        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-56 bg-gradient-to-t from-ocean via-ocean/70 to-transparent opacity-0 md:block motion-reduce:opacity-100"
       />
 
-      {/* Chapter rail — the route in miniature: gold up to where you are */}
+      {/* Chapter rail — a second way in: hovering a chapter opens it on the chart */}
       <div
         data-rail-box
         data-rail-layer
-        className="pointer-events-none absolute inset-x-0 bottom-14 mx-auto hidden w-[min(76rem,88vw)] opacity-0 md:block motion-reduce:hidden"
+        className="pointer-events-none absolute inset-x-0 bottom-14 mx-auto hidden w-[min(76rem,88vw)] opacity-0 md:block motion-reduce:opacity-100"
         aria-hidden
       >
         <div className="absolute left-0 right-0 top-[9px] h-px bg-gradient-to-r from-transparent via-limestone/25 to-transparent" />
         <div className="absolute left-[10%] right-[10%] top-[9px] h-px">
           <div
-            data-rail-fill
-            style={{ transform: "scaleX(0)" }}
-            className="h-full w-full origin-left bg-gradient-to-r from-gold/70 to-gold shadow-[0_0_8px_color-mix(in_srgb,var(--gold)_60%,transparent)]"
+            style={{ transform: `scaleX(${active === null ? 1 : active / last})` }}
+            className={cn(
+              "h-full w-full origin-left bg-gradient-to-r from-gold/70 to-gold shadow-[0_0_8px_color-mix(in_srgb,var(--gold)_60%,transparent)] transition-[transform,opacity] duration-500 ease-luxe",
+              active === null && "opacity-40",
+            )}
           />
         </div>
         <ol className="relative grid grid-cols-5">
           {questCheckpoints.map((cp, i) => (
-            <li
-              key={cp.id}
-              data-rail
-              data-state="ahead"
-              className="group flex flex-col items-center text-stone transition-colors duration-500 data-[state=active]:text-gold data-[state=done]:text-limestone"
-            >
-              <span className="relative flex h-[19px] w-[19px] items-center justify-center rounded-full border border-limestone/40 bg-ocean transition-[border-color,box-shadow,scale] duration-500 group-data-[state=active]:border-[1.5px] group-data-[state=active]:border-gold group-data-[state=active]:scale-125 group-data-[state=active]:shadow-[0_0_18px_color-mix(in_srgb,var(--gold)_85%,transparent)] group-data-[state=done]:border-limestone/60">
-                <span className="h-[7px] w-[7px] scale-0 rounded-full bg-gold-light transition-transform duration-500 group-data-[state=active]:scale-100" />
-              </span>
-              <span className="mt-4 font-display text-[1.25rem] leading-none">{chapter(i)}</span>
-              <span className="mt-2 text-center font-display text-[0.875rem] font-medium uppercase tracking-[0.2em]">
-                {cp.subtitle}
-              </span>
+            <li key={cp.id} className="flex justify-center">
+              <button
+                type="button"
+                tabIndex={-1}
+                {...trigger(i)}
+                data-state={active === i ? "active" : "idle"}
+                className="group flex cursor-pointer flex-col items-center px-3 text-limestone-soft transition-colors duration-300 hover:text-limestone data-[state=active]:text-gold group-data-[ready=true]/stage:pointer-events-auto"
+              >
+                <span className="relative flex h-[19px] w-[19px] items-center justify-center rounded-full border border-limestone/50 bg-ocean transition-[border-color,box-shadow,scale] duration-300 group-data-[state=active]:scale-125 group-data-[state=active]:border-[1.5px] group-data-[state=active]:border-gold group-data-[state=active]:shadow-[0_0_18px_color-mix(in_srgb,var(--gold)_85%,transparent)]">
+                  <span className="h-[7px] w-[7px] scale-0 rounded-full bg-gold-light transition-transform duration-300 group-data-[state=active]:scale-100" />
+                </span>
+                <span className="mt-4 font-display text-[1.25rem] leading-none">{chapter(i)}</span>
+                <span className="mt-2 text-center font-display text-[0.875rem] font-medium uppercase tracking-[0.2em]">
+                  {cp.subtitle}
+                </span>
+              </button>
             </li>
           ))}
         </ol>

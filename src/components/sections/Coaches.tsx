@@ -1,15 +1,13 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { coaches, initialCoachId, programLeadership } from "@/data/coaches";
-import { useReveal } from "@/animations/useReveal";
+import { coaches, leadCoachCount } from "@/data/coaches";
 import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
-import { CoachCarousel } from "./coaches/CoachCarousel";
+import { CoachCards } from "./coaches/CoachCards";
 
-/** Section 02 — The Minds Guiding the Voyage (coaches) */
+/** Section 03 — The Minds Guiding the Voyage: the coaches as playing cards. */
 export function Coaches() {
-  const ref = useReveal<HTMLElement>();
   const introRef = useRef<HTMLElement>(null);
 
   // Heading and lede sharpen from a blur as the section scrolls in (scrubbed).
@@ -35,7 +33,7 @@ export function Coaches() {
   }, []);
 
   return (
-    <section ref={ref} id="coaches" aria-labelledby="coaches-title" className="section relative overflow-x-clip">
+    <section id="coaches" aria-labelledby="coaches-title" className="section relative overflow-x-clip">
       <div className="site-container">
         {/* Centred opener — comes into focus as it scrolls into view */}
         <header ref={introRef} className="mx-auto max-w-5xl text-center">
@@ -55,26 +53,8 @@ export function Coaches() {
           </p>
         </header>
 
-        <div className="mt-12 md:mt-16" data-reveal>
-          <CoachCarousel coaches={coaches} initialId={initialCoachId} />
-        </div>
-
-        {/* Leadership */}
-        <div className="mt-28 grid gap-12 border-t border-line pt-14 lg:mt-36 lg:grid-cols-12">
-          <p className="eyebrow lg:col-span-3" data-reveal>
-            Program Leadership
-          </p>
-          <dl className="grid gap-10 sm:grid-cols-2 lg:col-span-9">
-            {programLeadership.map((person) => (
-              <div key={person.id} data-reveal>
-                <dt className="font-display text-3xl text-limestone">{person.name}</dt>
-                <dd className="eyebrow mt-3 text-[0.625rem]">{person.role}</dd>
-                <dd className="mt-5 max-w-sm text-[0.9375rem] leading-[1.7] text-limestone-soft">
-                  {person.note}
-                </dd>
-              </div>
-            ))}
-          </dl>
+        <div className="mt-12 md:mt-16">
+          <CoachCards coaches={coaches} lead={leadCoachCount} />
         </div>
       </div>
     </section>
