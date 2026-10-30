@@ -1,6 +1,6 @@
-# Argonauts 2027 — Landing Page
+# The Argonauts — Landing Page
 
-Premium, invitation-only membership landing page for **Argonauts 2027** by Octopi Poker.
+Premium, invitation-only membership landing page for **The Argonauts** by Octopi Poker.
 
 ## Stack
 

@@ -11,7 +11,7 @@ export const APPLY_URL =
 export const APPLY_IS_EXTERNAL = APPLY_URL.startsWith("http");
 
 export const site = {
-  name: "Argonauts 2027",
+  name: "The Argonauts",
   tagline: "The Ultimate Tournament Poker Study Group",
   description:
     "An invitation-only, year-long tournament poker membership by Octopi Poker. World-class coaching, personal mentorship, and an exclusive fellowship of 40 players pursuing excellence.",

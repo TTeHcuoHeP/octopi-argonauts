@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   keywords: [
-    "Argonauts 2027",
+    "The Argonauts",
     "tournament poker study group",
     "poker coaching",
     "Octopi Poker",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Argonauts 2027 — golden compass rose on deep ocean",
+        alt: "The Argonauts — golden compass rose on deep ocean",
       },
     ],
   },

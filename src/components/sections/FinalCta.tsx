@@ -46,7 +46,7 @@ export function FinalCta() {
         <div className="mt-14 flex flex-col items-center gap-6" data-reveal>
           <Button href={APPLY_URL} size="lg">
             <span className="sm:hidden">Apply to Join</span>
-            <span className="hidden sm:inline">Apply to Join Argonauts 2027</span>
+            <span className="hidden sm:inline">Apply to Join The Argonauts</span>
             <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
           </Button>
           <p className="eyebrow-muted">

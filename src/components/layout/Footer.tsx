@@ -14,7 +14,7 @@ export function Footer() {
             <div className="flex items-center gap-3 text-gold">
               <CompassMark className="h-8 w-8" />
               <span className="monument text-sm text-limestone">
-                Argonauts <span className="text-gold">2027</span>
+                The <span className="text-gold">Argonauts</span>
               </span>
             </div>
             <p className="mt-6 max-w-sm font-display text-2xl italic leading-snug text-limestone-soft">
