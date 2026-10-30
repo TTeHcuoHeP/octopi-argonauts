@@ -1,8 +1,9 @@
 "use client";
 
-import { pointSources, questCheckpoints, rewards } from "@/data/quest";
+import { questCheckpoints } from "@/data/quest";
 import { useReveal } from "@/animations/useReveal";
 import { QuestJourney } from "./quest/QuestJourney";
+import { Rewards } from "./quest/Rewards";
 
 /** Section 04 — The Quest: a scroll-driven voyage toward the Golden Fleece */
 export function Quest() {
@@ -34,54 +35,7 @@ export function Quest() {
         </ol>
       </div>
 
-      {/* How points are earned + rewards */}
-      <div className="site-container pb-[clamp(5rem,11vw,10rem)] pt-[clamp(5rem,9vw,8rem)]">
-        <div className="grid gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <p className="eyebrow" data-reveal>
-              How points are earned
-            </p>
-            <ul className="mt-8">
-              {pointSources.map((src, i) => (
-                <li
-                  key={src}
-                  className="flex items-baseline gap-6 border-b border-line py-4 text-[1.0625rem] text-limestone"
-                  data-reveal
-                >
-                  <span className="font-display text-sm tracking-[0.2em] text-stone">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  {src}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 text-sm italic text-stone" data-reveal>
-              Point mechanics are being finalised and will be shared with admitted members.
-            </p>
-          </div>
-
-          <div className="lg:col-span-6 lg:col-start-7">
-            <p className="eyebrow" data-reveal>
-              The rewards
-            </p>
-            <div className="mt-8 space-y-10">
-              {rewards.map((r, i) => (
-                <div key={r.id} className="grid grid-cols-[auto_1fr] gap-6" data-reveal>
-                  <span className="mt-1 font-display text-4xl font-light leading-none text-gold">
-                    {["I", "II", "III"][i]}
-                  </span>
-                  <div>
-                    <h3 className="font-display text-2xl text-limestone md:text-[1.75rem]">{r.title}</h3>
-                    <p className="mt-2 max-w-md text-[0.9375rem] leading-[1.7] text-limestone-soft">
-                      {r.body}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      <Rewards />
     </section>
   );
 }

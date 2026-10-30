@@ -25,8 +25,6 @@ import { cameraTransform, coverSize, measureCheckpoints, routePoints, smoothPath
 
 /** Per-breakpoint choreography. Scroll length is in viewport heights. */
 type JourneyConfig = {
-  /** Initial map width as a fraction of the viewport. */
-  contain: number;
   /** Where the route sits vertically once the map is open (room above for the title). */
   focusY: number;
   /** HUD docked to the bottom of the screen instead of beside the island. */
@@ -35,9 +33,9 @@ type JourneyConfig = {
 };
 
 const CONFIGS: Record<"desktop" | "tablet" | "mobile", JourneyConfig> = {
-  desktop: { contain: 0.7, focusY: 0.56, docked: false, scrollVh: 3 },
-  tablet: { contain: 0.82, focusY: 0.52, docked: false, scrollVh: 3 },
-  mobile: { contain: 0.92, focusY: 0.42, docked: true, scrollVh: 2.4 },
+  desktop: { focusY: 0.56, docked: false, scrollVh: 3 },
+  tablet: { focusY: 0.52, docked: false, scrollVh: 3 },
+  mobile: { focusY: 0.42, docked: true, scrollVh: 2.4 },
 };
 
 const ICONS: Record<QuestIcon, LucideIcon> = {
@@ -65,15 +63,17 @@ const MIN_ISLAND_GAP = Math.min(
 const ROUTE_SPAN = 0.95;
 const ROUTE_CENTER_X = 0.52;
 const ROUTE_CENTER_Y = 0.47;
+/** The chart starts almost open (this share of the open scale) and settles in with a slight zoom. */
+const START_SCALE = 0.97;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const chapter = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
- * Section 04 chart. Scroll does one thing: the contained map opens to fill the
- * screen while the title surfaces and the gold route draws itself across every
- * island. Then the pin releases and the chart is explored by hand — markers
+ * Section 04 chart. Scroll does one thing: the chart, already almost open, settles
+ * in with a slight zoom while the title surfaces and the gold route draws itself
+ * across every island. Then the pin releases and the chart is explored by hand — markers
  * pulse, and hovering (or tapping) a marker, an island name or a chapter on the
  * rail opens that chapter's panel. Map, route and markers share one transformed
  * coordinate system; labels, hit targets and panels stay in screen space.
@@ -251,8 +251,8 @@ export function QuestJourney() {
         const layout = () => {
           vp = { w: stage.clientWidth, h: stage.clientHeight };
           cover = coverSize(vp);
-          s0 = Math.min((cfg.contain * vp.w) / cover.w, (0.8 * vp.h) / cover.h);
           s1 = openScale(vp, cover);
+          s0 = START_SCALE * s1;
           world.style.width = `${cover.w}px`;
           world.style.height = `${cover.h}px`;
           band = measureBand(vp);
@@ -285,10 +285,10 @@ export function QuestJourney() {
           },
         });
 
-        // 01 — calm, contained chart: just the map and its island names.
-        tl.to({}, { duration: 0.4 });
-        // 02 — open to the full chart, the frame dissolving into the sea.
-        tl.to(state, { k: 1, vignette: 0, duration: 2, ease: "power1.inOut" });
+        // 01 — the chart, almost open: just the map and its island names.
+        tl.to({}, { duration: 0.3 });
+        // 02 — a slight zoom to the open chart, the frame dissolving into the sea.
+        tl.to(state, { k: 1, vignette: 0, duration: 1.2, ease: "power1.inOut" });
         // The title surfaces as the chart settles, and stays.
         tl.to(introVeil, { opacity: 1, duration: 0.9 }, "-=0.6")
           .to(introItems, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, stagger: 0.25, ease: "power2.out" }, "<")

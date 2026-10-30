@@ -165,7 +165,7 @@ export function ChartLens() {
       />
       <div
         ref={ringRef}
-        className="absolute left-0 top-0 rounded-full border border-line-gold opacity-0 transition-opacity duration-500 ease-luxe"
+        className="absolute left-0 top-0 rounded-full opacity-0 transition-opacity duration-500 ease-luxe"
         style={{ boxShadow: "inset 0 0 40px color-mix(in srgb, var(--gold) 8%, transparent)" }}
       />
     </div>

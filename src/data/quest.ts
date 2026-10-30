@@ -29,6 +29,16 @@ export const rewards = [
   },
 ] as const;
 
+export type RewardPrize = { id: "card-back" | "king" | "ring" | "fleece"; src: string; width: number; height: number };
+
+/** The prizes floating beside the rewards (trimmed cut-outs, 640 px wide). */
+export const rewardPrizes: RewardPrize[] = [
+  { id: "card-back", src: "/images/rewards/card-back.webp", width: 640, height: 894 },
+  { id: "king", src: "/images/rewards/king.webp", width: 640, height: 823 },
+  { id: "fleece", src: "/images/rewards/fleece.webp", width: 640, height: 864 },
+  { id: "ring", src: "/images/rewards/ring.webp", width: 640, height: 605 },
+];
+
 /**
  * The illustrated map behind the Quest journey — 3840 px web version of
  * /public/section 3 map/map_section4.jpg (5504 × 3072). Its size sets the aspect.

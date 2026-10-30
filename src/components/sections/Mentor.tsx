@@ -194,43 +194,6 @@ type Profile = {
 
 const profiles: Profile[] = [
   {
-    id: "greenwood",
-    name: "Sam Greenwood",
-    short: "Sam Greenwood",
-    subtitle: "Your personal mentor throughout the journey.",
-    lede: "Sam Greenwood personally supports each hero on their path, providing hands-on feedback, strategic guidance, and individual attention throughout the entire program.",
-    portrait: {
-      src: "/images/mentor/sam-portrait.webp",
-      width: 688,
-      height: 813,
-      alt: "Sam Greenwood, portrayed as a classical scholar at a map table by the sea",
-    },
-    features: [
-      {
-        title: "Personal support throughout the program",
-        body: "Direct access to Sam for your questions, decisions, and development at every stage of the journey.",
-        icon: <PersonIcon />,
-      },
-      {
-        title: "Hand history and database reviews",
-        body: "In-depth analysis of your hands and database with actionable insights tailored to your game.",
-        icon: <CardsIcon />,
-      },
-      {
-        title: "Strategic questions and direct guidance",
-        body: "Get clear answers to your most important strategic questions from one of the best in the world.",
-        icon: <KnightIcon />,
-      },
-      {
-        title: "Individual feedback as your game evolves",
-        body: "Ongoing, personalized feedback to help you apply concepts, track progress, and reach the next level.",
-        icon: <ScrollIcon />,
-      },
-    ],
-    closing:
-      "Sam is more than an instructor — he is your personal mentor, accompanying you throughout the entire voyage, helping you navigate challenges, refine your game, and unlock your full potential.",
-  },
-  {
     id: "livschitz",
     name: "Victoria Livschitz",
     short: "Victoria Livschitz",
@@ -266,6 +229,43 @@ const profiles: Profile[] = [
     ],
     closing:
       "Every great voyage begins with a vessel built for it. Victoria drew the lines of this one — so that you can give all your attention to the journey ahead.",
+  },
+  {
+    id: "greenwood",
+    name: "Sam Greenwood",
+    short: "Sam Greenwood",
+    subtitle: "Your personal mentor throughout the journey.",
+    lede: "Sam Greenwood personally supports each hero on their path, providing hands-on feedback, strategic guidance, and individual attention throughout the entire program.",
+    portrait: {
+      src: "/images/mentor/sam-portrait.webp",
+      width: 688,
+      height: 813,
+      alt: "Sam Greenwood, portrayed as a classical scholar at a map table by the sea",
+    },
+    features: [
+      {
+        title: "Personal support throughout the program",
+        body: "Direct access to Sam for your questions, decisions, and development at every stage of the journey.",
+        icon: <PersonIcon />,
+      },
+      {
+        title: "Hand history and database reviews",
+        body: "In-depth analysis of your hands and database with actionable insights tailored to your game.",
+        icon: <CardsIcon />,
+      },
+      {
+        title: "Strategic questions and direct guidance",
+        body: "Get clear answers to your most important strategic questions from one of the best in the world.",
+        icon: <KnightIcon />,
+      },
+      {
+        title: "Individual feedback as your game evolves",
+        body: "Ongoing, personalized feedback to help you apply concepts, track progress, and reach the next level.",
+        icon: <ScrollIcon />,
+      },
+    ],
+    closing:
+      "Sam is more than an instructor — he is your personal mentor, accompanying you throughout the entire voyage, helping you navigate challenges, refine your game, and unlock your full potential.",
   },
 ];
 
@@ -422,8 +422,8 @@ function ProfileCopy({ profile, active }: { profile: Profile; active: boolean })
 }
 
 /**
- * The two people who lead the voyage, one at a time: Sam Greenwood, the
- * resident mentor, and Victoria Livschitz, who designed the program. The
+ * The two people who lead the voyage, one at a time: Victoria Livschitz, who
+ * designed the program (shown first), and Sam Greenwood, the resident mentor. The
  * switcher above (arrows and portrait tabs) or the dimmed portrait card behind
  * changes profile: the portrait cards swap places like a small deck while the
  * copy cross-fades. Both copies share one stacked cell, so the section never
