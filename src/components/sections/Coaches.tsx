@@ -6,7 +6,7 @@ import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { CoachCards } from "./coaches/CoachCards";
 
-/** Section 03 — The Minds Guiding the Voyage: the coaches as playing cards. */
+/** Section 03 — The Gods Who Guide the Voyage: the coaches as playing cards. */
 export function Coaches() {
   const introRef = useRef<HTMLElement>(null);
 
@@ -42,7 +42,7 @@ export function Coaches() {
             data-focus
             className="bg-gradient-to-b from-gold-light to-gold bg-clip-text pb-2 text-[clamp(2.5rem,5.6vw,5rem)] text-transparent"
           >
-            The Minds Guiding the Voyage.
+            The Gods Who Guide the Voyage.
           </h2>
           <p
             data-focus
