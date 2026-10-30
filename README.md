@@ -26,7 +26,7 @@ src/
   data/            editable content: site config, coaches, pillars, program, quest, faq
   components/
     layout/        Header (hide-on-scroll, mobile menu), Footer, ChartLens (site-wide map reveal)
-    sections/      Hero (+ HeroSequence), Coaches (+ CoachCards), Mentor, Quest (+ QuestJourney), Program, Forty,
+    sections/      Hero (+ HeroSequence), Coaches (+ CoachCards), Mentor (Sam Greenwood ⇄ Victoria Livschitz switcher), Quest (+ QuestJourney), Program, Forty,
                    Membership, Faq, FinalCta
     ui/            Button, SectionIntro, Accordion
     graphics/      CompassMark (brand mark), portolanChart (generative map)
@@ -59,7 +59,7 @@ Typography: Cormorant Garamond (display), Cinzel (monumental wordmark / headline
 
 ## Pending assets & decisions
 
-- **Coach cards** — eight playing cards in `src/data/coaches.ts`: the first two are the head coaches (large, centre), the other six fan out three to each side and are dealt from the centre on scroll; below 1024px the six become a swipeable row. Three faces repeat until the rest arrive. Hover lifts a fanned card and straightens it; hover, keyboard focus or a tap turns a card over: the octopus back slowly darkens and the coach’s achievements rise in. To add or replace a card: face WebP in `public/images/coaches/cards/{id}.webp` (from a PNG: `ffmpeg -i card.png -vf scale=720:-2 -c:v libwebp -pix_fmt yuva420p -quality 84 out.webp`) plus a profile with `achievements` in `coaches`.
+- **Coach cards** — playing cards in `src/data/coaches.ts`: the first two are the head coaches, the rest are guests. On desktop all cards form one hand arching across the stage, each further card tilting more and dropping lower; the two head coaches are its outermost cards, only a little larger than the guests; everything is dealt from the centre on scroll. Below 1024px the heads sit side by side and the guests become a swipeable row. The spread sizes itself to the card count, so adding a card is just a new entry. Hover lifts a fanned card and straightens it; hover, keyboard focus or a tap turns a card over: the octopus back slowly darkens and the coach’s achievements rise in. To add or replace a card: face WebP in `public/images/coaches/cards/{id}.webp` (from a PNG: `ffmpeg -i card.png -vf scale=720:-2 -c:v libwebp -pix_fmt yuva420p -quality 84 out.webp`) plus a profile with `achievements` in `coaches`.
 - **Application URL** — `NEXT_PUBLIC_APPLY_URL`.
 - **Legal links** — footer placeholders in `src/data/site.ts`.
 - **Point mechanics** — no numerical values are stated; FAQ items flagged `pending` carry an editorial placeholder.

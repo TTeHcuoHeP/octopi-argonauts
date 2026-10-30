@@ -27,29 +27,27 @@ const TEXT_IN =
   "group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-[380ms] group-hover:duration-[450ms] group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:delay-300 group-focus-visible:duration-[450ms] group-data-[turned=true]:translate-y-0 group-data-[turned=true]:opacity-100 group-data-[turned=true]:delay-300 group-data-[turned=true]:duration-[450ms]";
 
 /**
- * Wing fans, inner card first: tilt grows and the card drops as it moves out,
- * so each wing reads as a hand of cards opening away from the head coaches.
+ * One hand of cards: each step away from the middle card tilts further and
+ * drops a little lower. The head coaches are the two outermost cards.
  */
-const FAN = [
-  { r: 4, y: 2 },
-  { r: 10, y: 8 },
-  { r: 16, y: 17 },
-];
+const ARC = { r: 3.6, y: 0.95 };
 
-/** Head-coach cards lean gently towards each other. */
-const HEAD_TILT = [-2.5, 2.5];
+/** Desktop spread proportions, in guest-card widths (--u). */
+// Head cards are only a little larger: 1.14 guest widths.
+const STEP = 0.6; // visible width each further guest card adds
+const HEAD_STEP = 0.76; // visible width of a head card beside its neighbour
 
 /**
  * Lift on hover or focus (desktop spread only): the card leaves the fan,
- * straightens and rises above its neighbours. Wing cards grow to head size.
+ * straightens and rises above its neighbours. Guest cards grow to head size.
  */
 const LIFT =
   "lg:transition-[rotate,translate,scale] lg:duration-[400ms] lg:ease-luxe lg:[rotate:var(--r)] lg:[translate:0_var(--y)] lg:hover:z-30 lg:hover:[rotate:0deg] lg:focus-within:z-30 lg:focus-within:[rotate:0deg]";
 
 /**
- * Coaches as a spread of playing cards: the two head coaches large in the
- * centre, three cards fanned out to each side. Each card turns over to its
- * back, which slowly darkens while the coach's record rises into view.
+ * Coaches as one hand of playing cards arching across the stage, the two head
+ * coaches (a little larger) as its outermost cards. Each card turns over to its back, which slowly darkens while
+ * the coach's record rises into view.
  * Below desktop: head coaches side by side, the rest in a swipeable row.
  */
 export function CoachCards({ coaches, lead }: { coaches: Coach[]; lead: number }) {
@@ -59,10 +57,10 @@ export function CoachCards({ coaches, lead }: { coaches: Coach[]; lead: number }
 
   const heads = coaches.slice(0, lead);
   const rest = coaches.slice(lead);
-  const half = Math.ceil(rest.length / 2);
-  // Left wing is listed outer → inner so the innermost card sits on top.
-  const left = rest.slice(0, half);
-  const right = rest.slice(half);
+  // Guest-card width that lets the whole hand fill the stage (capped on wide screens).
+  const span = 1 + STEP * Math.max(0, rest.length - 1) + HEAD_STEP * lead;
+  // Place in the hand, counted from its middle (the heads sit one step beyond the guests).
+  const edge = (rest.length - 1) / 2 + 1;
 
   // Deal: on desktop the cards slide out from the centre of the spread.
   useLayoutEffect(() => {
@@ -181,56 +179,61 @@ export function CoachCards({ coaches, lead }: { coaches: Coach[]; lead: number }
     </article>
   );
 
-  /** One card of a wing; `side` mirrors the fan. */
-  const wingCard = (coach: Coach, step: number, side: -1 | 1, overlap: boolean) => (
-    <li
-      key={coach.id}
-      style={{ "--r": `${side * FAN[step].r}deg`, "--y": `${FAN[step].y}%`, "--z": 10 - step } as CSSProperties}
-      className={`relative z-[var(--z)] w-[40cqw] shrink-0 snap-center md:w-[27cqw] lg:w-[calc(var(--u)*0.74)] lg:hover:[scale:1.35] lg:hover:[translate:0_-4%] lg:focus-within:[scale:1.35] lg:focus-within:[translate:0_-4%] ${
-        overlap ? "lg:ml-[calc(var(--u)*-0.3)]" : ""
-      } ${LIFT}`}
-    >
-      <div data-deal>{card(coach, false)}</div>
-    </li>
-  );
+  /** Tilt, drop and stacking for a card `d` places from the middle of the hand. */
+  const pose = (d: number) =>
+    ({ "--r": `${d * ARC.r}deg`, "--y": `${d * d * ARC.y}%`, "--z": 10 - Math.round(Math.abs(d)) }) as CSSProperties;
+
+  /** One guest card; `g` is its place among the guests. */
+  const guestCard = (coach: Coach, g: number) => {
+    const d = g - (rest.length - 1) / 2;
+    return (
+      <li
+        key={coach.id}
+        style={pose(d)}
+        className={`relative z-[var(--z)] w-[40cqw] shrink-0 snap-center md:w-[27cqw] lg:w-[var(--u)] lg:hover:[scale:1.25] lg:hover:[translate:0_-4%] lg:focus-within:[scale:1.25] lg:focus-within:[translate:0_-4%] ${
+          g > 0 ? "lg:ml-[calc(var(--u)*-0.4)]" : ""
+        } ${LIFT}`}
+      >
+        <div data-deal>{card(coach, false)}</div>
+      </li>
+    );
+  };
 
   return (
     <div
       ref={stage}
-      className="@container/stage flex flex-col items-center [--u:min(21rem,17.5cqw)] lg:flex-row lg:items-center lg:justify-center lg:pb-[calc(var(--u)*0.3)] lg:pt-[calc(var(--u)*0.12)]"
+      style={{ "--span": span } as CSSProperties}
+      className="@container/stage flex flex-col items-center [--u:min(18.5rem,calc(94cqw/var(--span)))] lg:flex-row lg:items-center lg:justify-center lg:pb-[calc(var(--u)*0.4)] lg:pt-[calc(var(--u)*0.1)]"
     >
-      {/* Head coaches: centre of the spread, lit from behind */}
-      <div className="relative lg:order-2 lg:mx-[calc(var(--u)*0.12)]">
+      {/* Head coaches: side by side on small screens, the two ends of the hand on desktop */}
+      <div className="relative lg:contents">
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(211,181,137,0.16),rgba(185,146,97,0.06)_50%,transparent)]"
+          className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[140%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(211,181,137,0.16),rgba(185,146,97,0.06)_50%,transparent)] lg:hidden"
           aria-hidden
         />
-        <ul className="relative flex gap-[4cqw] lg:gap-[calc(var(--u)*0.08)]">
+        <ul className="relative flex gap-[4cqw] lg:contents">
           {heads.map((coach, i) => (
             <li
               key={coach.id}
-              style={{ "--r": `${HEAD_TILT[i % 2]}deg`, "--y": "0%" } as CSSProperties}
-              className={`relative w-[min(47cqw,19rem)] lg:w-[var(--u)] lg:hover:[translate:0_-3%] lg:focus-within:[translate:0_-3%] ${LIFT}`}
+              style={pose(i === 0 ? -edge : edge)}
+              className={`relative w-[min(47cqw,19rem)] lg:z-[var(--z)] lg:w-[calc(var(--u)*1.14)] lg:hover:[scale:1.15] lg:hover:[translate:0_-4%] lg:focus-within:[scale:1.15] lg:focus-within:[translate:0_-4%] ${
+                i === 0 ? "lg:order-1 lg:-mr-[calc(var(--u)*0.38)]" : "lg:order-3 lg:-ml-[calc(var(--u)*0.38)]"
+              } ${LIFT}`}
             >
               <div data-deal>{card(coach, true)}</div>
             </li>
           ))}
         </ul>
-        <p className="mt-6 flex items-center justify-center gap-3 font-monument text-[0.6875rem] uppercase tracking-[0.32em] text-gold lg:absolute lg:inset-x-0 lg:top-full lg:mt-[calc(var(--u)*0.14)]">
+        <p className="mt-6 flex items-center justify-center gap-3 font-monument text-[0.6875rem] uppercase tracking-[0.32em] text-gold lg:hidden">
           <span className="h-px w-8 bg-gold/50" aria-hidden />
           Head Coaches
           <span className="h-px w-8 bg-gold/50" aria-hidden />
         </p>
       </div>
 
-      {/* Wings: one swipeable row on small screens, two fans either side on desktop */}
-      <div className="mt-8 flex w-[calc(100%+2*clamp(1.25rem,5vw,6rem))] snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(1.25rem,5vw,6rem)] py-4 [scrollbar-width:none] sm:gap-4 lg:contents">
-        <ul className="flex shrink-0 gap-3 sm:gap-4 lg:order-1 lg:gap-0">
-          {left.map((coach, i) => wingCard(coach, left.length - 1 - i, -1, i > 0))}
-        </ul>
-        <ul className="flex shrink-0 gap-3 sm:gap-4 lg:order-3 lg:gap-0">
-          {right.map((coach, i) => wingCard(coach, i, 1, i > 0))}
-        </ul>
+      {/* Guests: one swipeable row on small screens, the arch between the heads on desktop */}
+      <div className="mt-8 flex w-[calc(100%+2*clamp(1.25rem,5vw,6rem))] snap-x snap-mandatory overflow-x-auto px-[clamp(1.25rem,5vw,6rem)] py-4 [scrollbar-width:none] lg:contents">
+        <ul className="flex shrink-0 gap-3 sm:gap-4 lg:order-2 lg:gap-0">{rest.map(guestCard)}</ul>
       </div>
     </div>
   );

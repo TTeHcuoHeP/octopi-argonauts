@@ -8,7 +8,7 @@ import { APPLY_URL } from "@/data/site";
 import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 
-const HERO_IMAGE = "/hero/hero_argonauts_2.jpg";
+const HERO_IMAGE = "/hero/HERO_final.jpg";
 
 const highlights = ["Small Study Groups", "50 Weeks of Mastery", "40 Members Maximum"];
 
