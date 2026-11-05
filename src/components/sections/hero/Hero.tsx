@@ -98,12 +98,21 @@ export function Hero() {
             top coaches.
           </p>
 
-          <p
-            className="mt-8 font-display text-[clamp(1.5rem,2.3vw,2.125rem)] font-semibold leading-tight text-gold-light"
-            data-hero="spots"
-          >
-            Only 10 Spots Now Open
-          </p>
+          <div className="mt-8" data-hero="spots">
+            <p className="font-display text-[clamp(1.5rem,2.3vw,2.125rem)] font-semibold leading-tight text-gold-light">
+              Only 10 Spots Now Open
+            </p>
+            <p className="mt-2 text-[0.9375rem] text-limestone-soft md:text-base">
+              Plus a{" "}
+              <a
+                href="#dream-seat"
+                className="text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold-light hover:decoration-gold-light"
+              >
+                PGT Championship Dream Seat
+              </a>{" "}
+              &mdash; a $500,000 freeroll in Las Vegas.
+            </p>
+          </div>
 
           <div className="mt-7" data-hero="cta">
             <Button

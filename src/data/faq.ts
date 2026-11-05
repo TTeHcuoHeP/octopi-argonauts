@@ -53,6 +53,12 @@ export const faq: FaqItem[] = [
       "Fifty weeks of structured learning; weekly two-hour live sessions with lectures and Q&A from elite coaches; weekly drills, quizzes, and study assignments; personal mentorship with Sam Greenwood; a private member community; an Octopi Professional subscription; and a 50% discount on additional Octopi courses and paid content during the program.",
   },
   {
+    id: "dream-seat",
+    question: "What is the PGT Championship Dream Seat?",
+    answer:
+      "One Argonaut will receive a Dream Seat to the 2027 PGT Championship — the finale of the 2027 PokerGO Tour season and a $500,000 freeroll at the PokerGO Studio at ARIA in Las Vegas, in January 2028. The winner plays with no buy-in against the top 40 players from the season-long PGT leaderboard and select Dream Seat winners, starting with 100,000 chips (100 big blinds). The tournament runs over two days; exact dates are to be announced.",
+  },
+  {
     id: "apply",
     question: "How does the application process work?",
     answer: `Applications are open from November 1 to December 31, 2026. Admission is by invitation only following a review of your application, and admissions may be organised in waves of approximately 10 places. ${PENDING}`,
