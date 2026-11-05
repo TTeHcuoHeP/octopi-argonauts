@@ -8,7 +8,7 @@ import { APPLY_URL } from "@/data/site";
 import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 
-const HERO_IMAGE = "/hero/Eight-Minds_HERO_background.jpg";
+const HERO_IMAGE = "/hero/Eight-Minds_HERO_background_2.jpg";
 
 /**
  * Section 01 — Hero.
