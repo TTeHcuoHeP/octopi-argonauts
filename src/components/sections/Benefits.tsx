@@ -27,8 +27,9 @@ export function Benefits() {
             The ultimate study experience.
           </h2>
           <p className="mx-auto mt-5 max-w-[50rem] text-balance text-base leading-[1.65] text-limestone-soft">
-            Argonauts is not a subscription. It is a year of deliberate work, structured around four
-            commitments that make the difference between watching poker content and actually improving.
+            The Argonaut Game is not a subscription. It is a one-of-a-kind, year-long adventure,
+            structured around four pillars that turn routine poker study into a thrilling game while
+            teaching you every aspect of poker performance, on and off the felt.
           </p>
         </div>
 

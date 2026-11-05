@@ -39,7 +39,7 @@ export function FinalCta() {
           className="mx-auto mt-10 max-w-2xl font-display text-[clamp(1.25rem,2.2vw,1.75rem)] italic leading-[1.4] text-limestone-soft"
           data-reveal
         >
-          Fifty weeks. Forty members. A fellowship of the world&rsquo;s best, and a year you
+          Fifty weeks. A small crew of heroes. Guided by the world&rsquo;s best, and a year you
           will measure the rest of your poker life against.
         </p>
 

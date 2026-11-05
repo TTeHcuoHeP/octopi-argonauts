@@ -5,21 +5,23 @@ import { APPLY_URL, site } from "@/data/site";
 import { Button } from "@/components/ui/Button";
 import { SectionIntro } from "@/components/ui/SectionIntro";
 import { useReveal } from "@/animations/useReveal";
+import { ProgramButton } from "@/components/sections/Program";
 
 const usd = (n: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
-/** Section 07 — Membership & Applications */
+/** What a member would otherwise have to assemble alone — qualitative, no per-item prices. */
+const value = [
+  "Sam Greenwood as your private coach, all year",
+  "Weekly lectures from the legends of tournament poker",
+  "A structured study curriculum with homework, drills and quizzes",
+  "Octopi Professional, plus 50% off every Octopi course",
+];
+
+/** Section 05 — Membership & Applications: the price, the value behind it, and how to apply. */
 export function Membership() {
   const ref = useReveal<HTMLElement>({ stagger: 0.07 });
   const m = site.membership;
-
-  const schedule = [
-    { label: "Upon acceptance", amount: m.deposit },
-    { label: "Quarter two", amount: m.installmentAmount },
-    { label: "Quarter three", amount: m.installmentAmount },
-    { label: "Quarter four", amount: m.installmentAmount },
-  ];
 
   return (
     <section ref={ref} id="membership" aria-labelledby="membership-title" className="section relative bg-ocean-deep">
@@ -28,7 +30,7 @@ export function Membership() {
           {/* Left: narrative + price */}
           <div className="lg:col-span-5">
             <SectionIntro
-              index="07"
+              index="05"
               eyebrow="Membership & Applications"
               title={<span id="membership-title">An investment in a year of excellence.</span>}
               compact
@@ -39,9 +41,8 @@ export function Membership() {
               <p className="mt-4 font-display text-[clamp(3.5rem,7vw,6rem)] font-light leading-none text-limestone">
                 {usd(m.price)}
               </p>
-              <p className="mt-6 max-w-sm text-[0.9375rem] leading-[1.7] text-limestone-soft">
-                Paid as {usd(m.deposit)} upon acceptance, followed by {m.installments} quarterly
-                installments of {usd(m.installmentAmount)}.
+              <p className="mt-4 font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-tight text-gold-light">
+                or {usd(m.quarterly)} per quarter
               </p>
             </div>
 
@@ -54,47 +55,54 @@ export function Membership() {
             </div>
           </div>
 
-          {/* Right: payment schedule + admission details */}
+          {/* Right: the value behind the price + admission details */}
           <div className="lg:col-span-6 lg:col-start-7">
             <p className="eyebrow" data-reveal>
-              Payment schedule
+              The value
+            </p>
+            <p
+              className="mt-6 font-display text-[clamp(1.5rem,2.3vw,2.125rem)] leading-[1.3] text-limestone"
+              data-reveal
+            >
+              If you hired Sam as your private coach, added weekly lectures from these legends and a
+              structured study curriculum, you would be paying{" "}
+              <span className="text-gold-light">many thousands of dollars every month.</span>
             </p>
 
-            {/* Golden progression line with four stations */}
-            <ol className="relative mt-10 grid grid-cols-2 gap-y-12 md:grid-cols-4 md:gap-y-0">
-              <span className="absolute left-0 right-0 top-[5px] hidden h-px bg-line-gold md:block" aria-hidden data-reveal="line" />
-              {schedule.map((s, i) => (
-                <li key={s.label} className="relative pr-6 md:pt-8" data-reveal>
-                  <span
-                    aria-hidden
-                    className="absolute left-0 top-0 hidden h-[11px] w-[11px] rounded-full border border-gold bg-ocean-deep md:block"
-                  />
-                  <p className="eyebrow-muted text-[0.5625rem]">0{i + 1}</p>
-                  <p className="mt-3 font-display text-3xl text-limestone">{usd(s.amount)}</p>
-                  <p className="mt-2 text-xs tracking-[0.12em] text-stone uppercase">{s.label}</p>
+            <ul className="mt-10 border-t border-line">
+              {value.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-4 border-b border-line py-4 text-[0.9375rem] text-limestone md:text-base"
+                  data-reveal
+                >
+                  <span className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rotate-45 bg-gold" aria-hidden />
+                  {item}
                 </li>
               ))}
-            </ol>
+            </ul>
+            <p className="mt-6 text-[0.9375rem] leading-[1.7] text-limestone-soft" data-reveal>
+              In The Argonauts it all comes together in one year-long voyage — for a single membership.
+            </p>
+            <div className="mt-8" data-reveal>
+              <ProgramButton />
+            </div>
 
-            <dl className="mt-16 grid gap-8 border-t border-line pt-10 sm:grid-cols-2">
+            <dl className="mt-14 grid gap-8 border-t border-line pt-10 sm:grid-cols-3">
               {[
-                { k: "Maximum members", v: String(m.maxMembers) },
                 { k: "Applications", v: m.applicationWindow },
-                {
-                  k: "Admission",
-                  v: "By invitation only, following an application process",
-                },
-                { k: "Admission waves", v: `Organised in waves of ${m.waveSize}` },
+                { k: "Admission", v: "By invitation, after an application" },
+                { k: "Admission waves", v: `Waves of ${m.waveSize}` },
               ].map((item) => (
                 <div key={item.k} data-reveal>
                   <dt className="eyebrow-muted">{item.k}</dt>
-                  <dd className="mt-3 font-display text-2xl leading-snug text-limestone">{item.v}</dd>
+                  <dd className="mt-3 font-display text-xl leading-snug text-limestone">{item.v}</dd>
                 </div>
               ))}
             </dl>
 
             <p className="mt-10 text-sm italic leading-relaxed text-stone" data-reveal>
-              Argonauts is a high-ticket membership admitted by application. There is no
+              The Argonauts is a high-ticket membership admitted by application. There is no
               checkout — qualified applicants are invited to join following a review.
             </p>
           </div>

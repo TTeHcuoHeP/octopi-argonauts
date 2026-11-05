@@ -7,7 +7,6 @@ import { Coaches } from "@/components/sections/Coaches";
 import { Mentor } from "@/components/sections/Mentor";
 import { Quest } from "@/components/sections/Quest";
 import { Program } from "@/components/sections/Program";
-import { Forty } from "@/components/sections/Forty";
 import { Membership } from "@/components/sections/Membership";
 import { Faq } from "@/components/sections/Faq";
 import { FinalCta } from "@/components/sections/FinalCta";
@@ -24,7 +23,6 @@ export default function HomePage() {
         <Mentor />
         <Quest />
         <Program />
-        <Forty />
         <Membership />
         <Faq />
         <FinalCta />

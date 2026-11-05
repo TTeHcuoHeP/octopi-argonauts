@@ -14,7 +14,7 @@ export function Faq() {
       <div className="site-container grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <SectionIntro
-            index="08"
+            index="06"
             eyebrow="Questions"
             title={<span id="faq-title">Before you apply.</span>}
             lede="The essentials, answered. Anything not yet confirmed is marked as such — we would rather tell you so than guess."

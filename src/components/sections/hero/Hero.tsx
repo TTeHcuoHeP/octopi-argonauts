@@ -8,14 +8,12 @@ import { APPLY_URL } from "@/data/site";
 import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 
-const HERO_IMAGE = "/hero/HERO_final.jpg";
-
-const highlights = ["Small Study Groups", "50 Weeks of Mastery", "40 Members Maximum"];
+const HERO_IMAGE = "/hero/Eight-Minds_HERO_background.jpg";
 
 /**
  * Section 01 — Hero.
  * The Argonauts round the chart table on deck (right); the offer reads on the
- * dark left of the frame. Entrance: eyebrow → headline → copy → spots → CTA → highlights.
+ * dark left of the frame. Entrance: eyebrow → headline → copy → spots → CTA.
  */
 export function Hero() {
   const scope = useRef<HTMLElement>(null);
@@ -36,8 +34,7 @@ export function Hero() {
         )
         .from("[data-hero='copy']", { autoAlpha: 0, y: 18, duration: 1 }, "-=0.8")
         .from("[data-hero='spots']", { autoAlpha: 0, y: 14, duration: 0.9 }, "-=0.7")
-        .from("[data-hero='cta']", { autoAlpha: 0, y: 14, duration: 0.9 }, "-=0.6")
-        .from("[data-hero='meta'] > *", { autoAlpha: 0, y: 10, duration: 0.8, stagger: 0.1 }, "-=0.6");
+        .from("[data-hero='cta']", { autoAlpha: 0, y: 14, duration: 0.9 }, "-=0.6");
     }, el);
 
     return () => ctx.revert();
@@ -73,7 +70,7 @@ export function Hero() {
         <div className="max-w-[40rem] lg:max-w-[46rem]">
           <div data-hero="eyebrow">
             <p className="font-display text-[0.9375rem] font-medium uppercase tracking-[0.42em] text-limestone md:text-lg">
-              The Argonauts
+              The Argonauts <span className="text-gold">Game</span>
             </p>
             <span className="mt-4 block h-px w-16 bg-gold" aria-hidden />
           </div>
@@ -89,15 +86,16 @@ export function Hero() {
             <span className="block bg-gradient-to-b from-[color-mix(in_srgb,var(--gold-light)_65%,var(--limestone))] to-gold bg-clip-text pb-[0.06em] text-transparent">
               Tournament Poker
             </span>
-            <span className="block text-limestone">Study Group</span>
+            <span className="block text-limestone">Masterclass</span>
           </h1>
 
           <p
             className="mt-8 max-w-[36rem] text-[1.0625rem] leading-[1.7] text-limestone-soft md:text-lg"
             data-hero="copy"
           >
-            An exclusive, year-long poker mastery experience built around small study groups,
-            world-class coaching, and personal mentorship from poker&rsquo;s greatest minds.
+            An exclusive, year-long poker mastery experience built around a small group of Heroes
+            working together, guided by poker&rsquo;s greatest minds, with personal mentorship from
+            top coaches.
           </p>
 
           <p
@@ -117,23 +115,6 @@ export function Hero() {
               <ArrowRight className="h-5 w-5" strokeWidth={1.5} />
             </Button>
           </div>
-
-          <ul
-            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.8125rem] tracking-[0.06em] text-limestone-soft sm:gap-x-3"
-            data-hero="meta"
-          >
-            {highlights.map((item, i) => (
-              <li key={item} className="flex items-center gap-3">
-                {/* Dividers only where the row stays on one line */}
-                {i > 0 && (
-                  <span className="hidden text-gold sm:inline" aria-hidden>
-                    ·
-                  </span>
-                )}
-                {item}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>

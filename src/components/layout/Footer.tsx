@@ -65,7 +65,7 @@ export function Footer() {
           <p>
             © {year} {site.supporter}. All rights reserved.
           </p>
-          <p className="tracking-[0.2em] uppercase">Invitation only · Limited to 40</p>
+          <p className="tracking-[0.2em] uppercase">Invitation only · A small fellowship</p>
         </div>
       </div>
     </footer>

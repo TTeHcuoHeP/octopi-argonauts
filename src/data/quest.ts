@@ -18,14 +18,14 @@ export const rewards = [
     body: "Awarded to the Champion — the highest-scoring participant of the year.",
   },
   {
-    id: "deck",
-    title: "A Custom Signed Deck",
-    body: "A commemorative reward for members who complete the program.",
-  },
-  {
     id: "ring",
     title: "The Golden Ram Ring",
     body: "A lasting emblem of the journey, for those who see it through.",
+  },
+  {
+    id: "deck",
+    title: "A Custom Signed Deck",
+    body: "A commemorative reward for members who complete the program.",
   },
 ] as const;
 
@@ -108,10 +108,10 @@ export const questCheckpoints: QuestCheckpoint[] = [
     tagline: "Answer the call.",
     title: "The Call",
     description: [
-      "Your journey begins with an exclusive fellowship of up to 40 ambitious poker enthusiasts.",
+      "Your journey begins with a small, exclusive fellowship of ambitious poker players.",
     ],
     tags: [
-      { label: "Up to 40 members", icon: "members" },
+      { label: "A small fellowship", icon: "members" },
       { label: "Invitation only", icon: "invitation" },
     ],
     x: 145 / 1672,

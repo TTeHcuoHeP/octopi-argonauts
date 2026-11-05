@@ -56,6 +56,12 @@ export function Coaches() {
         <div className="mt-12 md:mt-16">
           <CoachCards coaches={coaches} lead={leadCoachCount} />
         </div>
+
+        <p className="mt-10 flex items-center justify-center gap-4 text-center font-display text-[clamp(1.125rem,1.5vw,1.375rem)] italic text-limestone-soft md:mt-12">
+          <span className="hidden h-px w-10 bg-gold/50 sm:block" aria-hidden />
+          More coaches will be announced later.
+          <span className="hidden h-px w-10 bg-gold/50 sm:block" aria-hidden />
+        </p>
       </div>
     </section>
   );

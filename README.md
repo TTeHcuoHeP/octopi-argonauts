@@ -26,7 +26,7 @@ src/
   data/            editable content: site config, coaches, pillars, program, quest, faq
   components/
     layout/        Header (hide-on-scroll, mobile menu), Footer, ChartLens (site-wide map reveal)
-    sections/      Hero (+ HeroSequence), Coaches (+ CoachCards), Mentor (Victoria Livschitz ⇄ Sam Greenwood switcher), Quest (+ QuestJourney), Program, Forty,
+    sections/      Hero (+ HeroSequence), Coaches (+ CoachCards), Mentor (Victoria Livschitz and Sam Greenwood, both on view), Quest (+ QuestJourney), Program (popover banner, opened from the nav and Membership),
                    Membership, Faq, FinalCta
     ui/            Button, SectionIntro, Accordion
     graphics/      CompassMark (brand mark), portolanChart (generative map)

@@ -93,17 +93,20 @@ export function Rewards() {
 
       <div className="site-container pb-[calc(30vw+50px)] pt-[calc(60vw+50px)] lg:py-[calc(clamp(6rem,9vw,10rem)+50px)]">
         <div className="mx-auto max-w-[44rem] text-center lg:max-w-[min(60rem,52vw)]">
-          <p className="eyebrow" data-reveal>
-            The rewards
-          </p>
-          <div className="mt-8 grid gap-10 sm:grid-cols-3 sm:gap-8">
+          <h2
+            data-reveal
+            className="bg-gradient-to-b from-gold-light to-gold bg-clip-text pb-2 font-display text-[clamp(2.5rem,5.6vw,5rem)] leading-[1.05] text-transparent"
+          >
+            The Rewards
+          </h2>
+          <div className="mt-10 grid md:mt-12 gap-10 sm:grid-cols-3 sm:gap-8">
             {rewards.map((r, i) => (
               <div key={r.id} data-reveal>
-                <span className="font-display text-3xl font-light leading-none text-gold">{["I", "II", "III"][i]}</span>
+                <span className="font-display text-[2.75rem] font-semibold leading-none text-gold lg:text-[clamp(2.75rem,3.4vw,3.5rem)]">{["I", "II", "III"][i]}</span>
                 <h3 className="mt-3 text-balance font-display text-[1.875rem] leading-[1.1] text-limestone lg:text-[clamp(1.875rem,2.3vw,2.5rem)]">
                   {r.title}
                 </h3>
-                <p className="mx-auto mt-2 max-w-[18rem] text-sm leading-[1.65] text-limestone-soft">{r.body}</p>
+                <p className="mx-auto mt-3 max-w-[20rem] text-base leading-[1.6] text-limestone-soft lg:text-[1.0625rem]">{r.body}</p>
               </div>
             ))}
           </div>
@@ -133,7 +136,7 @@ export function Rewards() {
             ))}
           </ul>
           <p className="mt-5 text-sm italic text-stone" data-reveal>
-            Point mechanics are being finalised and will be shared with admitted members.
+            Specifics to be shared with members.
           </p>
         </div>
       </div>

@@ -21,7 +21,7 @@ const lichtenberger: Profile = {
   achievements: [
     "A long-standing name at the highest stakes of tournament poker",
     "Celebrated for creative, aggressive lines grounded in theory",
-    "A respected teacher of the modern game",
+    "Drawn to the game’s more mysterious side: intuition and the inner game",
   ],
 };
 
@@ -31,7 +31,7 @@ const cates: Profile = {
   image: "/images/coaches/cards/cates.webp",
   achievements: [
     "One of the most feared heads-up players in online history",
-    "World Series of Poker bracelet winner",
+    "Back-to-back WSOP Poker Players Championship winner (2021, 2022) — a bracelet held in the same regard as the Main Event",
     "Fearless, unconventional strategy across every format",
   ],
 };

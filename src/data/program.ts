@@ -4,8 +4,7 @@ export const programInclusions = [
   { label: "Lectures and Q&A with elite coaches", detail: "Recordings available" },
   { label: "Weekly drills, quizzes, and study assignments", detail: "Applied practice" },
   { label: "Personal mentorship with Sam Greenwood", detail: "Private Discord & Octopi" },
-  { label: "Private member community", detail: "Limited to 40" },
-  { label: "Annual personal database review", detail: "For online players" },
+  { label: "Private member community", detail: "Members only" },
   { label: "Octopi Professional subscription", detail: "Included for the program" },
   {
     label: "50% discount on additional Octopi courses and paid content",

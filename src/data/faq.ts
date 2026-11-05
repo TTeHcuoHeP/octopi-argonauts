@@ -19,7 +19,7 @@ export const faq: FaqItem[] = [
   {
     id: "pro",
     question: "Do I need to be a professional poker player?",
-    answer: `Admission is by invitation following an application process, and the group is limited to 40 members. The program is built for committed players of a high standard; professional status is not the sole criterion. ${PENDING}`,
+    answer: `Admission is by invitation following an application process, and the group is kept deliberately small. The program is built for committed players of a high standard; professional status is not the sole criterion. ${PENDING}`,
     pending: true,
   },
   {
@@ -50,7 +50,7 @@ export const faq: FaqItem[] = [
     id: "included",
     question: "What is included in the membership?",
     answer:
-      "Fifty weeks of structured learning; weekly two-hour live sessions with lectures and Q&A from elite coaches; weekly drills, quizzes, and study assignments; personal mentorship with Sam Greenwood; a private member community; an annual personal database review for online players; an Octopi Professional subscription; and a 50% discount on additional Octopi courses and paid content during the program.",
+      "Fifty weeks of structured learning; weekly two-hour live sessions with lectures and Q&A from elite coaches; weekly drills, quizzes, and study assignments; personal mentorship with Sam Greenwood; a private member community; an Octopi Professional subscription; and a 50% discount on additional Octopi courses and paid content during the program.",
   },
   {
     id: "apply",
@@ -62,6 +62,6 @@ export const faq: FaqItem[] = [
     id: "installments",
     question: "Can I pay in installments?",
     answer:
-      "Yes. The annual membership of $25,000 is paid as $7,000 upon acceptance, followed by three quarterly installments of $6,000.",
+      "Yes. The membership is $25,000 paid in full, or $7,000 per quarter across the four quarters of 2027.",
   },
 ];

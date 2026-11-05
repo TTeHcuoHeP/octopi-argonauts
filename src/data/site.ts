@@ -12,17 +12,16 @@ export const APPLY_IS_EXTERNAL = APPLY_URL.startsWith("http");
 
 export const site = {
   name: "The Argonauts",
-  tagline: "The Ultimate Tournament Poker Study Group",
+  tagline: "The Ultimate Tournament Poker Masterclass",
   description:
-    "An invitation-only, year-long tournament poker membership by Octopi Poker. World-class coaching, personal mentorship, and an exclusive fellowship of 40 players pursuing excellence.",
+    "An invitation-only, year-long tournament poker membership by Octopi Poker. World-class coaching, personal mentorship, and a small fellowship of players pursuing excellence.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://argonauts.octopipoker.ai",
   supporter: "Octopi Poker",
   membership: {
     price: 25000,
-    deposit: 7000,
-    installments: 3,
-    installmentAmount: 6000,
-    maxMembers: 40,
+    /** Pay-as-you-go alternative to the full price, per quarter of 2027. */
+    quarterly: 7000,
+    quarters: 4,
     weeks: 50,
     applicationWindow: "November 1 – December 31, 2026",
     applicationOpens: "November 1, 2026",

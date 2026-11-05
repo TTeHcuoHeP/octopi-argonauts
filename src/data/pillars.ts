@@ -10,25 +10,25 @@ export const pillars: Pillar[] = [
   {
     numeral: "I",
     title: "Elite Coaching",
-    body: "Weekly live lectures and Q&A with some of the world's greatest tournament poker players. Recordings are available to members.",
+    body: "Weekly live lectures with the world's greatest tournament players, where they share how they think about the game, study and make decisions. Topics cover strategy, process, mindset and Q&A. Recordings are available to members.",
     icon: "/images/benefits/coaching.webp",
   },
   {
     numeral: "II",
-    title: "Personal Mentorship",
-    body: "Direct access to Sam Greenwood for hand-history reviews, strategic questions, and personalized guidance through private Discord and Octopi.",
+    title: "Private Mentorship",
+    body: "Direct access to Sam Greenwood for private hand-history reviews, strategic questions, and one-on-one growth guidance through private Discord and the Octopi Poker platform.",
     icon: "/images/benefits/mentorship.webp",
   },
   {
     numeral: "III",
-    title: "Structured Improvement",
-    body: "Weekly study sessions, drills, quizzes, challenges, and practical application of newly learned concepts.",
+    title: "Structured & Gamified Study",
+    body: "Weekly study sessions with homework drills, quizzes, games and other challenges. Members can prepare and lead sessions themselves. Points are awarded all year on a leaderboard, with incredible prizes revealed to members later.",
     icon: "/images/benefits/improvement.webp",
   },
   {
     numeral: "IV",
-    title: "An Exclusive Fellowship",
-    body: "A small, committed community of ambitious players studying, competing, and improving together.",
+    title: "Exclusive & Competitive Fellowship",
+    body: "A small, committed community of ambitious players studying, competing, and improving together. Everyone works at their own pace and time; all materials are recorded and shared exclusively with the group.",
     icon: "/images/benefits/fellowship.webp",
   },
 ];
