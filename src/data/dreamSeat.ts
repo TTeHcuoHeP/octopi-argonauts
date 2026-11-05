@@ -11,6 +11,6 @@ export const dreamSeat = {
     { k: "Prize pool", v: "$500,000" },
     { k: "Starting stack", v: "100 big blinds" },
   ],
-  body: "One entry into the finale of the 2027 PokerGO Tour season — no buy-in, a share of the anticipated $500,000 prize pool on the line.",
+  body: "There is one seat, and only one member will win it. The winner takes an entry into the finale of the 2027 PokerGO Tour season — no buy-in, a share of the anticipated $500,000 prize pool on the line.",
   note: "Two days, exact dates to be announced. The field: the top 40 eligible players from the season-long PGT leaderboard and select Dream Seat winners. Prize pool made up of cash and PGT Passport funds; the Dream Seat starts with 100,000 chips.",
 } as const;

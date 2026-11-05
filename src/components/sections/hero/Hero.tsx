@@ -103,7 +103,7 @@ export function Hero() {
               Only 10 Spots Now Open
             </p>
             <p className="mt-2 text-[0.9375rem] text-limestone-soft md:text-base">
-              Plus a{" "}
+              Plus, one member wins a{" "}
               <a
                 href="#dream-seat"
                 className="text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold-light hover:decoration-gold-light"

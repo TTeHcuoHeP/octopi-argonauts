@@ -16,7 +16,7 @@ const value = [
   "Weekly lectures from the legends of tournament poker",
   "A structured study curriculum with homework, drills and quizzes",
   "Octopi Professional, plus 50% off every Octopi course",
-  "A PGT Championship Dream Seat for one Argonaut — a $500,000 freeroll in Las Vegas",
+  "The chance to win the one PGT Championship Dream Seat — a $500,000 freeroll in Las Vegas",
 ];
 
 /** Section 05 — Membership & Applications: the price, the value behind it, and how to apply. */

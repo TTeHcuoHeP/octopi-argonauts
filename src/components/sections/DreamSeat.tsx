@@ -40,7 +40,7 @@ export function DreamSeat() {
 
             <div className="lg:col-span-7">
               <p className="eyebrow" data-reveal>
-                A member exclusive
+                One seat · One Argonaut
               </p>
               <h2
                 id="dream-seat-title"
@@ -56,7 +56,7 @@ export function DreamSeat() {
                 {dreamSeat.pitch}
               </p>
               <p className="mt-5 max-w-[36rem] text-[0.9375rem] leading-[1.7] text-limestone-soft md:text-base" data-reveal>
-                Awarded to one Argonaut. {dreamSeat.body}
+                {dreamSeat.body}
               </p>
             </div>
           </div>
