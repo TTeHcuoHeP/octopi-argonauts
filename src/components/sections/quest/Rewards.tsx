@@ -163,7 +163,7 @@ export function Rewards() {
               className="mt-10 scroll-mt-28 md:mt-12"
             >
               <div>
-                <span className="font-display text-[3.25rem] font-semibold leading-none text-gold lg:text-[clamp(3.25rem,4vw,4.25rem)]">
+                <span className="mx-auto flex h-[6.5rem] w-[6.5rem] items-center justify-center rounded-full border border-gold/60 pt-[0.06em] font-display text-[3.25rem] font-semibold leading-none text-gold shadow-[0_0_24px_-8px_rgba(211,181,137,0.5),inset_0_0_0_5px_rgba(14,26,40,1),inset_0_0_0_6px_rgba(211,181,137,0.25)] lg:h-[clamp(6.5rem,7.5vw,8rem)] lg:w-[clamp(6.5rem,7.5vw,8rem)] lg:text-[clamp(3.25rem,4vw,4.25rem)]">
                   I
                 </span>
                 <h3 className="mt-3 font-display text-[2.125rem] leading-[1.05] text-limestone lg:text-[clamp(2.25rem,3vw,3rem)]">
@@ -233,7 +233,7 @@ export function Rewards() {
                 .reverse()
                 .map((r) => (
                   <div key={r.id} data-reveal>
-                    <span className="font-display text-[2.75rem] font-semibold leading-none text-gold lg:text-[clamp(2.75rem,3.4vw,3.5rem)]">
+                    <span className="mx-auto flex h-[5.5rem] w-[5.5rem] items-center justify-center rounded-full border border-gold/60 pt-[0.06em] font-display text-[2.5rem] font-semibold leading-none text-gold shadow-[0_0_24px_-8px_rgba(211,181,137,0.5),inset_0_0_0_5px_rgba(14,26,40,1),inset_0_0_0_6px_rgba(211,181,137,0.25)] lg:h-[clamp(5.5rem,6.2vw,6.5rem)] lg:w-[clamp(5.5rem,6.2vw,6.5rem)] lg:text-[clamp(2.5rem,3vw,3rem)]">
                       {r.numeral}
                     </span>
                     <h3 className="mt-3 text-balance font-display text-[1.875rem] leading-[1.1] text-limestone lg:text-[clamp(1.875rem,2.3vw,2.5rem)]">
