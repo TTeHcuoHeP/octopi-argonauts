@@ -62,7 +62,7 @@ export function Accordion({ items, defaultOpen }: { items: AccordionItem[]; defa
               )}
             >
               <div className="overflow-hidden">
-                <p className="max-w-3xl pb-8 pl-[calc(1.5rem+1.5rem)] text-[1rem] leading-[1.75] text-limestone-soft md:pl-[calc(2.5rem+1.5rem)]">
+                <p className="text-[1.0625rem] md:text-lg max-w-3xl pb-8 pl-[calc(1.5rem+1.5rem)] leading-[1.75] text-limestone-soft md:pl-[calc(2.5rem+1.5rem)]">
                   {item.answer}
                 </p>
               </div>

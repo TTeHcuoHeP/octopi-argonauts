@@ -16,7 +16,7 @@ const value = [
   "Weekly lectures from the legends of tournament poker",
   "A structured study curriculum with homework, drills and quizzes",
   "Octopi Professional, plus 50% off every Octopi course",
-  "The chance to win the one PGT Championship Dream Seat — a $500,000 freeroll in Las Vegas",
+  "For the Champion, a PGT Championship Dream Seat — a $500,000 freeroll in Las Vegas",
 ];
 
 /** Section 05 — Membership & Applications: the price, the value behind it, and how to apply. */
@@ -52,7 +52,7 @@ export function Membership() {
                 Apply to Join
                 <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
               </Button>
-              <span className="text-sm text-stone">Applications {m.applicationWindow}</span>
+              <span className="text-[1.0625rem] md:text-lg text-stone">Applications {m.applicationWindow}</span>
             </div>
           </div>
 
@@ -74,7 +74,7 @@ export function Membership() {
               {value.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-4 border-b border-line py-4 text-[0.9375rem] text-limestone md:text-base"
+                  className="text-[1.0625rem] md:text-lg flex items-start gap-4 border-b border-line py-4 text-limestone"
                   data-reveal
                 >
                   <span className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rotate-45 bg-gold" aria-hidden />
@@ -82,7 +82,7 @@ export function Membership() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-[0.9375rem] leading-[1.7] text-limestone-soft" data-reveal>
+            <p className="text-[1.0625rem] md:text-lg mt-6 leading-[1.7] text-limestone-soft" data-reveal>
               In The Argonauts it all comes together in one year-long voyage — for a single membership.
             </p>
             <div className="mt-8" data-reveal>
@@ -102,7 +102,7 @@ export function Membership() {
               ))}
             </dl>
 
-            <p className="mt-10 text-sm italic leading-relaxed text-stone" data-reveal>
+            <p className="text-[1.0625rem] md:text-lg mt-10 italic leading-relaxed text-stone" data-reveal>
               The Argonauts is a high-ticket membership admitted by application. There is no
               checkout — qualified applicants are invited to join following a review.
             </p>

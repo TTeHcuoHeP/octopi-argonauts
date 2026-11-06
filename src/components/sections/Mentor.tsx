@@ -301,7 +301,7 @@ function ProfileRow({ profile, flip }: { profile: Profile; flip: boolean }) {
         <p data-reveal className="mt-3 text-[clamp(1.0625rem,1.35vw,1.375rem)] font-light tracking-[0.02em] text-limestone">
           {profile.subtitle}
         </p>
-        <p data-reveal className="mt-4 max-w-[46rem] text-[0.9375rem] leading-[1.7] text-limestone-soft md:text-base">
+        <p data-reveal className="text-[1.0625rem] md:text-lg mt-4 max-w-[46rem] leading-[1.7] text-limestone-soft">
           {profile.lede}
         </p>
 
@@ -315,7 +315,7 @@ function ProfileRow({ profile, flip }: { profile: Profile; flip: boolean }) {
                 <h3 className="font-display text-[clamp(1.125rem,1.3vw,1.3125rem)] font-semibold leading-snug text-limestone transition-colors duration-500 group-hover:text-gold-light">
                   {title}
                 </h3>
-                <p className="mt-1 text-[0.875rem] leading-[1.6] text-limestone-soft">{body}</p>
+                <p className="text-[1.0625rem] md:text-lg mt-1 leading-[1.6] text-limestone-soft">{body}</p>
               </div>
             </li>
           ))}

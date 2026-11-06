@@ -24,9 +24,9 @@ export function Benefits() {
             id="benefits-title"
             className="font-display text-[clamp(2.25rem,3.8vw,3.75rem)] font-semibold leading-[1.05] text-limestone md:whitespace-nowrap"
           >
-            The ultimate study experience.
+            The 4 Pillars of the Argonauts Game
           </h2>
-          <p className="mx-auto mt-5 max-w-[50rem] text-balance text-base leading-[1.65] text-limestone-soft">
+          <p className="text-[1.0625rem] md:text-lg mx-auto mt-5 max-w-[50rem] text-balance leading-[1.65] text-limestone-soft">
             The Argonaut Game is not a subscription. It is a one-of-a-kind, year-long adventure,
             structured around four pillars that turn routine poker study into a thrilling game while
             teaching you every aspect of poker performance, on and off the felt.
@@ -58,9 +58,9 @@ export function Benefits() {
                   <span className="block font-display text-[1.75rem] leading-none text-gold">{p.numeral}</span>
                   <span className="mt-3 block h-px w-6 bg-gold/70" aria-hidden />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 max-sm:contents">
                   <h3 className="font-display text-[clamp(1.5rem,2.1vw,2rem)] leading-tight text-limestone">{p.title}</h3>
-                  <p className="mt-3 max-w-[30rem] text-[0.9375rem] leading-[1.65] text-limestone-soft">{p.body}</p>
+                  <p className="text-[1.0625rem] md:text-lg mt-3 max-w-[30rem] leading-[1.65] text-limestone-soft max-sm:col-span-2 max-sm:col-start-2 max-sm:row-start-2">{p.body}</p>
                 </div>
                 <div className="flex items-start justify-center pt-1 sm:items-center sm:pt-0">
                   <Image

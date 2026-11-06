@@ -76,7 +76,7 @@ export function Program() {
         >
           Fifty weeks. One disciplined rhythm.
         </h2>
-        <p className="mt-5 max-w-[36rem] text-[0.9375rem] leading-[1.7] text-limestone-soft md:text-base">
+        <p className="text-[1.0625rem] md:text-lg mt-5 max-w-[36rem] leading-[1.7] text-limestone-soft">
           A clear, repeatable structure — so that the hard work of improvement becomes a habit rather
           than an intention.
         </p>
@@ -106,12 +106,12 @@ export function Program() {
                   key={item.label}
                   className="grid gap-1 border-b border-line py-4 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-8"
                 >
-                  <span className="text-base leading-snug text-limestone">{item.label}</span>
+                  <span className="text-[1.0625rem] md:text-lg leading-snug text-limestone">{item.label}</span>
                   <span className="text-xs tracking-[0.18em] text-stone uppercase sm:text-right">{item.detail}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-sm leading-relaxed text-stone">{scheduleNote}</p>
+            <p className="text-[1.0625rem] md:text-lg mt-5 leading-relaxed text-stone">{scheduleNote}</p>
           </div>
 
           {/* A typical session */}
@@ -141,13 +141,13 @@ export function Program() {
                   </div>
                   <div>
                     <h3 className="font-display text-xl text-limestone md:text-2xl">{s.title}</h3>
-                    <p className="mt-2 text-[0.9375rem] leading-[1.7] text-limestone-soft">{s.body}</p>
+                    <p className="text-[1.0625rem] md:text-lg mt-2 leading-[1.7] text-limestone-soft">{s.body}</p>
                   </div>
                 </li>
               ))}
             </ol>
 
-            <p className="mt-8 border-t border-line pt-5 text-sm text-stone">
+            <p className="text-[1.0625rem] md:text-lg mt-8 border-t border-line pt-5 text-stone">
               Session recordings are available to members who cannot attend live.
             </p>
           </div>

@@ -56,7 +56,7 @@ export const faq: FaqItem[] = [
     id: "dream-seat",
     question: "What is the PGT Championship Dream Seat?",
     answer:
-      "One Argonaut — a single member, not every member — will win a Dream Seat to the 2027 PGT Championship — the finale of the 2027 PokerGO Tour season and a $500,000 freeroll at the PokerGO Studio at ARIA in Las Vegas, in January 2028. The winner plays with no buy-in against the top 40 players from the season-long PGT leaderboard and select Dream Seat winners, starting with 100,000 chips (100 big blinds). The tournament runs over two days; exact dates are to be announced.",
+      "The Champion — the highest-scoring Argonaut of the year — wins a Dream Seat, alongside the Golden Fleece Trophy, to the 2027 PGT Championship — the finale of the 2027 PokerGO Tour season and a $500,000 freeroll at the PokerGO Studio at ARIA in Las Vegas, in January 2028. The winner plays with no buy-in against the top 40 players from the season-long PGT leaderboard and select Dream Seat winners, starting with 100,000 chips (100 big blinds). The tournament runs over two days; exact dates are to be announced.",
   },
   {
     id: "apply",

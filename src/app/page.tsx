@@ -6,7 +6,7 @@ import { Benefits } from "@/components/sections/Benefits";
 import { Coaches } from "@/components/sections/Coaches";
 import { Mentor } from "@/components/sections/Mentor";
 import { Quest } from "@/components/sections/Quest";
-import { DreamSeat } from "@/components/sections/DreamSeat";
+import { Rewards } from "@/components/sections/quest/Rewards";
 import { Program } from "@/components/sections/Program";
 import { Membership } from "@/components/sections/Membership";
 import { Faq } from "@/components/sections/Faq";
@@ -20,10 +20,10 @@ export default function HomePage() {
       <main id="main" className="flex-1">
         <Hero />
         <Benefits />
+        <Rewards />
         <Coaches />
         <Mentor />
         <Quest />
-        <DreamSeat />
         <Program />
         <Membership />
         <Faq />

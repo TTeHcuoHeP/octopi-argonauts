@@ -32,7 +32,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="font-sans text-sm text-limestone-soft transition-colors hover:text-gold"
+                    className="text-[1.0625rem] md:text-lg font-sans text-limestone-soft transition-colors hover:text-gold"
                   >
                     {item.label}
                   </Link>
@@ -48,7 +48,7 @@ export function Footer() {
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="font-sans text-sm text-limestone-soft transition-colors hover:text-gold"
+                    className="text-[1.0625rem] md:text-lg font-sans text-limestone-soft transition-colors hover:text-gold"
                     aria-disabled={item.href === "#"}
                   >
                     {item.label}
@@ -61,7 +61,7 @@ export function Footer() {
 
         <div className="rule mt-16" />
 
-        <div className="mt-8 flex flex-col gap-4 text-xs text-stone sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-[1.0625rem] md:text-lg mt-8 flex flex-col gap-4 text-stone sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {site.supporter}. All rights reserved.
           </p>

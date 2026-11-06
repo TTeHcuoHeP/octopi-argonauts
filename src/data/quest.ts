@@ -11,25 +11,29 @@ export const pointSources = [
   "Contributions to the member community",
 ] as const;
 
+/** Counted down from third to first: the Champion's trophy comes last. */
 export const rewards = [
   {
-    id: "trophy",
-    title: "The Golden Fleece Trophy",
-    body: "Awarded to the Champion — the highest-scoring participant of the year.",
+    id: "deck",
+    numeral: "III",
+    title: "A Custom Signed Deck",
+    body: "A commemorative reward for members who complete the program.",
   },
   {
     id: "ring",
+    numeral: "II",
     title: "The Golden Ram Ring",
     body: "A lasting emblem of the journey, for those who see it through.",
   },
   {
-    id: "deck",
-    title: "A Custom Signed Deck",
-    body: "A commemorative reward for members who complete the program.",
+    id: "trophy",
+    numeral: "I",
+    title: "The Golden Fleece Trophy",
+    body: "Awarded to the Champion — the highest-scoring participant of the year.",
   },
 ] as const;
 
-export type RewardPrize = { id: "card-back" | "king" | "ring" | "fleece"; src: string; width: number; height: number };
+export type RewardPrize = { id: "card-back" | "king" | "ring" | "fleece" | "cup"; src: string; width: number; height: number };
 
 /** The prizes floating beside the rewards (trimmed cut-outs, 640 px wide). */
 export const rewardPrizes: RewardPrize[] = [
@@ -37,6 +41,7 @@ export const rewardPrizes: RewardPrize[] = [
   { id: "king", src: "/images/rewards/king.webp", width: 640, height: 823 },
   { id: "fleece", src: "/images/rewards/fleece.webp", width: 640, height: 864 },
   { id: "ring", src: "/images/rewards/ring.webp", width: 640, height: 605 },
+  { id: "cup", src: "/images/rewards/cup.webp", width: 640, height: 795 },
 ];
 
 /**
@@ -69,7 +74,8 @@ export type QuestIcon =
   | "community"
   | "deck"
   | "trophy"
-  | "ring";
+  | "ring"
+  | "seat";
 
 export type QuestCheckpoint = {
   id: string;
@@ -78,8 +84,6 @@ export type QuestCheckpoint = {
   /** Short line under the island name, before the chapter opens. */
   tagline: string;
   title: string;
-  /** Optional overline above the title (used by the final chapter). */
-  headline?: string;
   description: string[];
   /** Supporting labels with icons, drawn from the description. */
   tags?: { label: string; icon: QuestIcon }[];
@@ -174,14 +178,14 @@ export const questCheckpoints: QuestCheckpoint[] = [
     id: "fleece",
     subtitle: "The Golden Fleece",
     tagline: "A higher game awaits.",
-    headline: "The Golden Fleece",
-    title: "The ultimate prize awaits the Champion of the Argonauts.",
+    title: "The Champion’s Prize",
     description: [
-      "The highest-scoring participant becomes Champion and receives the Golden Fleece Trophy.",
-      "Members who complete the program also receive commemorative rewards, including a signed custom deck and Golden Ram ring.",
+      "The top-scoring Argonaut is crowned Champion and wins the Golden Fleece Trophy and the PGT Championship Dream Seat.",
+      "Everyone who completes the voyage receives a signed deck and the Golden Ram ring.",
     ],
     tags: [
       { label: "Trophy", icon: "trophy" },
+      { label: "Dream Seat", icon: "seat" },
       { label: "Signed deck", icon: "deck" },
       { label: "Golden Ram ring", icon: "ring" },
     ],

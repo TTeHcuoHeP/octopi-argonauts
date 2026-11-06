@@ -8,7 +8,7 @@ import { APPLY_URL } from "@/data/site";
 import { getGsap } from "@/animations/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 
-const HERO_IMAGE = "/hero/Eight-Minds_HERO_background_2.jpg";
+const HERO_IMAGE = "/hero/HERO_final_november_old-plus-new.jpg";
 
 /**
  * Section 01 — Hero.
@@ -102,8 +102,8 @@ export function Hero() {
             <p className="font-display text-[clamp(1.5rem,2.3vw,2.125rem)] font-semibold leading-tight text-gold-light">
               Only 10 Spots Now Open
             </p>
-            <p className="mt-2 text-[0.9375rem] text-limestone-soft md:text-base">
-              Plus, one member wins a{" "}
+            <p className="text-[1.0625rem] md:text-lg mt-2 text-limestone-soft">
+              Plus, the Champion wins a{" "}
               <a
                 href="#dream-seat"
                 className="text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:text-gold-light hover:decoration-gold-light"
